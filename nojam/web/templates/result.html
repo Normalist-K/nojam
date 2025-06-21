@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>심리테스트 결과</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-4 max-w-xl mx-auto text-center">
+  <h1 class="text-2xl font-bold mb-4">당신의 결과는:</h1>
+  <p class="text-3xl font-extrabold mb-6">{{ result_type }}</p>
+
+  <h2 class="text-xl font-semibold mb-2">선택한 답</h2>
+  <pre class="bg-gray-100 p-2 rounded text-left">{{ answers | tojson(indent=2) }}</pre>
+
+  <!-- 광고 슬롯 Stub -->
+  <div id="ad-slot-1" class="border border-dashed border-gray-400 h-24 flex items-center justify-center my-6">
+    광고 영역 (Stub)
+  </div>
+
+  <!-- 카카오 공유 Stub 버튼 -->
+  <button id="share-btn" class="bg-yellow-400 px-4 py-2 rounded">카카오톡 공유</button>
+  <script>
+    document.getElementById('share-btn').addEventListener('click', () => {
+      fetch('/stub/kakao/share');
+      alert('공유 완료 (stub)!');
+    });
+  </script>
+</body>
+</html>

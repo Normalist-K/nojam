@@ -2,6 +2,10 @@ from fastapi import FastAPI
 
 app = FastAPI(title="Nojam Psych Test API", version="0.1.0")
 
+from nojam.web.routes import router as web_router  # noqa: E402
+
+app.include_router(web_router)
+
 
 @app.get("/health", tags=["meta"])
 async def health() -> dict[str, str]:

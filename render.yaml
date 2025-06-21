@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: nojam-psych-test
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: |
+      pip install uv
+      uv sync --system
+    startCommand: uv run uvicorn nojam.main:app --host 0.0.0.0 --port 8000
+    healthCheckPath: /health

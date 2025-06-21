@@ -2,6 +2,6 @@ services:
   - type: web
     name: nojam-psych-test
     env: docker
-    region: oregon
+    region: singapore
     plan: free
     healthCheckPath: /health

@@ -16,7 +16,7 @@ WORKDIR /app
 COPY pyproject.toml .
 
 # Install Python dependencies via uv
-RUN uv sync --system
+RUN uv sync
 
 # Copy application code
 COPY . .

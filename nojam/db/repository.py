@@ -2,6 +2,7 @@
 
 비동기 aiosqlite를 사용하여 CRUD를 제공한다.
 """
+
 from __future__ import annotations
 
 import json
@@ -23,7 +24,9 @@ class AnswerRepository:
     async def _get_conn(self) -> aiosqlite.Connection:
         """싱글턴 커넥션 반환."""
         if self._conn is None:
-            self._conn = await aiosqlite.connect(self._db_path, uri=self._db_path.startswith("file:"))
+            self._conn = await aiosqlite.connect(
+                self._db_path, uri=self._db_path.startswith("file:")
+            )
             self._conn.row_factory = aiosqlite.Row
         return self._conn
 
@@ -31,7 +34,7 @@ class AnswerRepository:
         """answers 테이블이 없으면 생성한다."""
         conn = await self._get_conn()
         await conn.execute(
-                """
+            """
                 CREATE TABLE IF NOT EXISTS answers (
                     id TEXT PRIMARY KEY,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -87,3 +90,17 @@ class AnswerRepository:
         conn = await self._get_conn()
         await conn.execute("DELETE FROM answers WHERE id = ?", (id,))
         await conn.commit()
+
+    # ---- Context management -------------------------------------------------
+
+    async def close(self) -> None:
+        """열려 있는 데이터베이스 커넥션을 닫는다."""
+        if self._conn is not None:
+            await self._conn.close()
+            self._conn = None
+
+    async def __aenter__(self) -> "AnswerRepository":
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb) -> None:  # type: ignore[override]
+        await self.close()

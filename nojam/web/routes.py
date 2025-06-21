@@ -29,7 +29,7 @@ def get_repo() -> AnswerRepository:
 @router.get("/quiz", response_class=HTMLResponse)
 async def quiz(request: Request) -> HTMLResponse:
     """10문항 폼 렌더."""
-    return templates.TemplateResponse("quiz.html", {"request": request})
+    return templates.TemplateResponse(request, "quiz.html", {})
 
 
 @router.post("/submit")
@@ -90,9 +90,9 @@ async def result(answer_id: str, request: Request, repo: AnswerRepository = Depe
         raise HTTPException(status_code=404, detail="결과를 찾을 수 없습니다.")
 
     return templates.TemplateResponse(
+        request,
         "result.html",
         {
-            "request": request,
             "result_type": record["result_type"],
             "answers": json.loads(record["answers_json"]),
         },

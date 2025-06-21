@@ -1,4 +1,7 @@
 from fastapi import FastAPI
+from nojam.settings import configure_logging
+
+configure_logging()
 
 app = FastAPI(title="Nojam Psych Test API", version="0.1.0")
 

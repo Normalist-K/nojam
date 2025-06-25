@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대화 스타일 심리테스트 공유 이미지</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Malgun Gothic', sans-serif;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .share-card {
+            width: 600px;
+            height: 800px;
+            margin: 20px;
+            border-radius: 25px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .share-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .card-header {
+            height: 200px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            color: white;
+            text-align: center;
+        }
+        
+        .test-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-subtitle {
+            font-size: 20px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .result-section {
+            background: white;
+            height: 450px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .result-type {
+            font-size: 36px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .result-description {
+            font-size: 22px;
+            line-height: 1.5;
+            color: #555;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .result-quote {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 20px;
+            font-size: 18px;
+            text-align: center;
+            font-style: italic;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .footer-section {
+            background: #f8f9ff;
+            height: 150px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .cta-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .test-link {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 유형별 배경색 */
+        .type-A { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
+        .type-B { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .type-C { background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%); }
+        .type-D { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+        .type-E { background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%); }
+        .type-F { background: linear-gradient(135deg, #00b894 0%, #00a085 100%); }
+        .type-G { background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%); }
+        .type-H { background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%); }
+        .type-I { background: linear-gradient(135deg, #ff7675 0%, #d63031 100%); }
+        .type-J { background: linear-gradient(135deg, #00cec9 0%, #55a3ff 100%); }
+        
+        .controls {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: transform 0.2s ease;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 20px;
+            justify-items: center;
+        }
+        
+        .sample-card {
+            border: 4px solid #667eea;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6); }
+            100% { box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center; font-size: 36px; color: #333; margin-bottom: 40px;">
+            🗣️ 대화 스타일 심리테스트 공유 이미지
+        </h1>
+        
+        <div class="controls">
+            <button class="download-btn" onclick="downloadAllImages()">전체 공유 이미지 다운로드</button>
+            <button class="download-btn" onclick="downloadCurrentImage()">선택한 이미지 다운로드</button>
+        </div>
+        
+        <div class="grid-container">
+            <!-- A: 감정형 인간 -->
+            <div class="share-card sample-card" id="share-A">
+                <div class="card-header type-A">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🎭</div>
+                    <div class="result-type">감정형 인간</div>
+                    <div class="result-description">
+                        감정이 먼저 나오는 당신!<br>
+                        눈물도 많고 마음도 따뜻한<br>
+                        정 많은 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "아이고, 그 얘기 들으니까 내가 다 울컥하네"
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- B: 조용조용 인간 -->
+            <div class="share-card" id="share-B">
+                <div class="card-header type-B">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🐢</div>
+                    <div class="result-type">조용조용 인간</div>
+                    <div class="result-description">
+                        말은 적지만 속은 깊은 당신!<br>
+                        신중하고 차분한<br>
+                        사려깊은 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "음... 그런 것 같기도 하고..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- C: 이야기꾼 인간 -->
+            <div class="share-card" id="share-C">
+                <div class="card-header type-C">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">📜</div>
+                    <div class="result-type">이야기꾼 인간</div>
+                    <div class="result-description">
+                        대화의 드라마 제작자인 당신!<br>
+                        서사적이고 재미있는<br>
+                        천생 스토리텔러예요
+                    </div>
+                    <div class="result-quote">
+                        "그 얘기 하자면 말이 길어지는데..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- D: 인물 위주 인간 -->
+            <div class="share-card" id="share-D">
+                <div class="card-header type-D">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🧓</div>
+                    <div class="result-type">인물 위주 인간</div>
+                    <div class="result-description">
+                        자기 얘기보다 가족 얘기가 먼저!<br>
+                        사람 중심적이고 관계를<br>
+                        소중히 여기는 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "우리 집 사람이 그러는데..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- E: 타임머신 인간 -->
+            <div class="share-card" id="share-E">
+                <div class="card-header type-E">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">⏳</div>
+                    <div class="result-type">타임머신 인간</div>
+                    <div class="result-description">
+                        기억을 시간표로 저장하는 당신!<br>
+                        정확하고 체계적인<br>
+                        시간 감각의 달인이에요
+                    </div>
+                    <div class="result-quote">
+                        "그게 언제였냐 하면, 98년 여름이었나..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- F: 원칙형 인간 -->
+            <div class="share-card" id="share-F">
+                <div class="card-header type-F">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🧱</div>
+                    <div class="result-type">원칙형 인간</div>
+                    <div class="result-description">
+                        신념과 철학이 단단한 당신!<br>
+                        일관되고 믿음직한<br>
+                        소신 있는 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "원래 나는 말이지..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- G: 보고서 인간 -->
+            <div class="share-card" id="share-G">
+                <div class="card-header type-G">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">📊</div>
+                    <div class="result-type">보고서 인간</div>
+                    <div class="result-description">
+                        정보 중심의 명확한 당신!<br>
+                        간결하고 정확한<br>
+                        팩트 중심 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "그건 정확히 말하면..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- H: 혼잣말 인간 -->
+            <div class="share-card" id="share-H">
+                <div class="card-header type-H">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🪞</div>
+                    <div class="result-type">혼잣말 인간</div>
+                    <div class="result-description">
+                        자기반성과 내면 이야기가 많은 당신!<br>
+                        성찰적이고 솔직한<br>
+                        진솔한 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "그땐 내가 참 바보였지..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- I: 토크쇼 인간 -->
+            <div class="share-card" id="share-I">
+                <div class="card-header type-I">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🎙️</div>
+                    <div class="result-type">토크쇼 인간</div>
+                    <div class="result-description">
+                        질문부터 진행까지 다 하는 당신!<br>
+                        주도적이고 활발한<br>
+                        대화의 MC 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "그거 말이야, 내가 물어볼게..."
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+
+            <!-- J: 회피 개그 인간 -->
+            <div class="share-card" id="share-J">
+                <div class="card-header type-J">
+                    <div class="test-title">🧪 수다로 알아보는</div>
+                    <div class="test-subtitle">내 대화 스타일</div>
+                </div>
+                <div class="result-section">
+                    <div class="result-emoji">🐸</div>
+                    <div class="result-type">회피 개그 인간</div>
+                    <div class="result-description">
+                        진지함을 유머로 포장하는 당신!<br>
+                        재치있고 밝은<br>
+                        분위기 메이커 스타일이에요
+                    </div>
+                    <div class="result-quote">
+                        "아, 그런 얘기는 좀 그렇고... 하하"
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <div class="cta-text">나는 어떤 대화 스타일일까?</div>
+                    <div class="test-link">▶ 무료 테스트 하기</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCard = null;
+        
+        // 카드 클릭 시 선택
+        document.querySelectorAll('.share-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // 이전 선택 해제
+                document.querySelectorAll('.share-card').forEach(c => {
+                    c.classList.remove('sample-card');
+                });
+                
+                // 현재 카드 선택
+                this.classList.add('sample-card');
+                currentCard = this;
+            });
+        });
+        
+        // 개별 이미지 다운로드
+        function downloadCurrentImage() {
+            if (!currentCard) {
+                alert('다운로드할 이미지를 먼저 클릭해서 선택해주세요.');
+                return;
+            }
+            
+            html2canvas(currentCard, {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: null
+            }).then(canvas => {
+                const link = document.createElement('a');
+                const cardId = currentCard.id.split('-')[1];
+                const typeName = currentCard.querySelector('.result-type').textContent;
+                link.download = `대화스타일_공유_${cardId}_${typeName}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }).catch(err => {
+                console.error('다운로드 중 오류가 발생했습니다:', err);
+                alert('다운로드 중 오류가 발생했습니다. 브라우저에서 우클릭 > 이미지 저장을 이용해보세요.');
+            });
+        }
+        
+        // 전체 이미지 다운로드
+        function downloadAllImages() {
+            const cards = document.querySelectorAll('.share-card');
+            let downloadCount = 0;
+            
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    html2canvas(card, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: null
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        const cardId = card.id.split('-')[1];
+                        const typeName = card.querySelector('.result-type').textContent;
+                        link.download = `대화스타일_공유_${cardId}_${typeName}.png`;
+                        link.href = canvas.toDataURL();
+                        link.click();
+                        
+                        downloadCount++;
+                        if (downloadCount === cards.length) {
+                            alert('모든 공유 이미지 다운로드가 완료되었습니다!');
+                        }
+                    }).catch(err => {
+                        console.error('다운로드 중 오류:', err);
+                    });
+                }, index * 500); // 500ms 간격으로 다운로드
+            });
+        }
+        
+        // html2canvas 라이브러리 로드
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

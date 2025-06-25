@@ -1,0 +1,469 @@
+{
+  "$schema": "../schemas/quiz-schema-v2.1.json",
+  "meta": {
+    "id": "conversation-style-test",
+    "title": "수다로 알아보는 내 대화 스타일",
+    "description": "일상 대화에서 나타나는 당신의 소통 패턴을 분석해보는 5060 세대 맞춤 심리테스트",
+    "version": "1.0.0",
+    "author": "nojam",
+    "created_at": "2024-12-28",
+    "estimated_time": "3-5분",
+    "target_age": "50-66세"
+  },
+  "config": {
+    "question_count": 15,
+    "result_types": 10,
+    "scoring_method": "simple_count",
+    "randomize_questions": false,
+    "show_progress": true
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "text": "\"어떻게 지내세요?\" 하면 괜히 근황 30분 떠들고 싶다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q1_a",
+          "text": "그렇다 (이야기할 게 많아서)",
+          "result_type": "C"
+        },
+        {
+          "id": "q1_b",
+          "text": "아니다 (짧게 말하는 편)",
+          "result_type": "B"
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "요즘 좀 울컥하는 일이 많다. 드라마 보다가도 훌쩍.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q2_a",
+          "text": "그렇다 (감정이 풍부한 편)",
+          "result_type": "A"
+        },
+        {
+          "id": "q2_b",
+          "text": "아니다 (무덤덤한 편)",
+          "result_type": "G"
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "\"그땐 몇 년이었지…\"부터 말이 시작된다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q3_a",
+          "text": "그렇다 (연도부터 정확히)",
+          "result_type": "E"
+        },
+        {
+          "id": "q3_b",
+          "text": "아니다 (대충 얘기함)",
+          "result_type": "A"
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "text": "내 얘기보다 가족 얘기가 더 자연스럽다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q4_a",
+          "text": "그렇다 (부모·배우자·자녀 이야기)",
+          "result_type": "D"
+        },
+        {
+          "id": "q4_b",
+          "text": "아니다 (자기 중심으로 말함)",
+          "result_type": "I"
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "text": "말 많은 사람 보면 난 \"아이고, 난 못 하겠다\" 싶다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q5_a",
+          "text": "그렇다 (내향적인 편)",
+          "result_type": "B"
+        },
+        {
+          "id": "q5_b",
+          "text": "아니다 (수다 좋아함)",
+          "result_type": "C"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "text": "사람한테 상처받은 얘기 하면 아직도 울컥한다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q6_a",
+          "text": "그렇다 (감정 표현이 풍부)",
+          "result_type": "A"
+        },
+        {
+          "id": "q6_b",
+          "text": "아니다 (건조하게 말함)",
+          "result_type": "G"
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "text": "내가 한 말에 내가 감탄하거나 후회하는 편이다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q7_a",
+          "text": "그렇다 (자기 반성을 많이 함)",
+          "result_type": "H"
+        },
+        {
+          "id": "q7_b",
+          "text": "아니다 (쿨함을 유지)",
+          "result_type": "J"
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "text": "\"그땐 내가 참 바보였지\" 하는 말 자주 한다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q8_a",
+          "text": "그렇다 (자기성찰을 많이 함)",
+          "result_type": "H"
+        },
+        {
+          "id": "q8_b",
+          "text": "아니다 (외부탓이나 회피)",
+          "result_type": "J"
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "text": "이야기하다 보면 내가 질문하고 내가 대답하고 있다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q9_a",
+          "text": "그렇다 (주도적으로 대화함)",
+          "result_type": "I"
+        },
+        {
+          "id": "q9_b",
+          "text": "아니다 (상대방 리드 따름)",
+          "result_type": "D"
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "text": "\"원래 나는 말이지\"로 시작하는 말 자주 한다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q10_a",
+          "text": "그렇다 (자기 철학이 있음)",
+          "result_type": "F"
+        },
+        {
+          "id": "q10_b",
+          "text": "아니다 (즉흥적으로 말함)",
+          "result_type": "A"
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "text": "웃기려고 한 말 아닌데 다들 웃는다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q11_a",
+          "text": "그렇다 (회피성 유머가 있음)",
+          "result_type": "J"
+        },
+        {
+          "id": "q11_b",
+          "text": "아니다 (진지하게 말함)",
+          "result_type": "G"
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "text": "\"그 얘기는 좀 그렇고…\" 하면서 돌려 말하는 편이다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q12_a",
+          "text": "그렇다 (불편한 것 회피)",
+          "result_type": "J"
+        },
+        {
+          "id": "q12_b",
+          "text": "아니다 (직설적으로 말함)",
+          "result_type": "F"
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "text": "누가 \"그땐 어땠어요?\" 하면 시간·장소부터 떠올린다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q13_a",
+          "text": "그렇다 (시점 기억 중심)",
+          "result_type": "E"
+        },
+        {
+          "id": "q13_b",
+          "text": "아니다 (감정 중심으로 기억)",
+          "result_type": "A"
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "text": "\"내 인생도 책 한 권쯤은 되지\"란 말 해본 적 있다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q14_a",
+          "text": "그렇다 (서사 욕망이 있음)",
+          "result_type": "C"
+        },
+        {
+          "id": "q14_b",
+          "text": "아니다 (관심 없음)",
+          "result_type": "B"
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "text": "진지한 얘기 나올 때 분위기 풀려고 농담하는 편이다.",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q15_a",
+          "text": "그렇다 (유머로 회피)",
+          "result_type": "J"
+        },
+        {
+          "id": "q15_b",
+          "text": "아니다 (그대로 받아들임)",
+          "result_type": "A"
+        }
+      ]
+    }
+  ],
+  "results": {
+    "A": {
+      "code": "A",
+      "title": "감정형 인간",
+      "subtitle": "마음이 먼저 움직이는 당신",
+      "description": "감정이 풍부하고 공감 능력이 뛰어난 당신. 대화할 때 상대방의 마음을 먼저 헤아리고, 자신의 감정도 솔직하게 표현하는 편입니다. 눈물도 많고, 웃음도 많은 진정한 감정 표현의 달인이에요.",
+      "keywords": ["감정 풍부", "공감 능력", "솔직함", "따뜻함", "진정성"],
+      "quote": "\"마음이 움직여야 말도 나오는 법이지\"",
+      "emoji": "🎭",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+        "number": "①",
+        "css_class": "type-1"
+      },
+      "share": {
+        "title": "나는 감정형 인간!",
+        "description": "마음이 먼저 움직이는 감성파",
+        "hashtags": ["#감정형인간", "#감정풍부", "#공감능력", "#대화스타일테스트"]
+      }
+    },
+    "B": {
+      "code": "B",
+      "title": "조용조용 인간",
+      "subtitle": "속 깊은 사색가",
+      "description": "말수는 적지만 깊이 있는 당신. 불필요한 말은 하지 않고, 꼭 필요한 순간에 의미 있는 한 마디를 던지는 스타일입니다. 내향적이지만 누구보다 진중하고 신중한 소통을 추구해요.",
+      "keywords": ["신중함", "깊이", "내향적", "사려깊음", "진중함"],
+      "quote": "\"말은 적게, 마음은 깊게\"",
+      "emoji": "🐢",
+      "style": {
+        "gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        "number": "②",
+        "css_class": "type-2"
+      },
+      "share": {
+        "title": "나는 조용조용 인간!",
+        "description": "속 깊은 사색가",
+        "hashtags": ["#조용조용인간", "#신중함", "#내향적", "#대화스타일테스트"]
+      }
+    },
+    "C": {
+      "code": "C",
+      "title": "이야기꾼 인간",
+      "subtitle": "대화의 드라마 제작자",
+      "description": "풍부한 서사와 생동감 넘치는 표현력을 가진 당신. 평범한 일상도 흥미진진한 이야기로 만들어내는 타고난 스토리텔러입니다. 사람들이 당신의 이야기에 빠져들게 만드는 매력이 있어요.",
+      "keywords": ["스토리텔링", "표현력", "재미", "생동감", "매력"],
+      "quote": "\"인생은 이야기로 가득 차 있어\"",
+      "emoji": "📜",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ffd89b 0%, #19547b 100%)",
+        "number": "③",
+        "css_class": "type-3"
+      },
+      "share": {
+        "title": "나는 이야기꾼 인간!",
+        "description": "대화의 드라마 제작자",
+        "hashtags": ["#이야기꾼인간", "#스토리텔링", "#표현력", "#대화스타일테스트"]
+      }
+    },
+    "D": {
+      "code": "D",
+      "title": "인물 위주 인간",
+      "subtitle": "관계 중심의 소통가",
+      "description": "가족과 주변 사람들에 대한 이야기를 자연스럽게 풀어내는 당신. 자기 자랑보다는 소중한 사람들의 이야기를 통해 자신을 표현하는 따뜻한 마음의 소유자입니다.",
+      "keywords": ["가족 중심", "관계 지향", "따뜻함", "배려", "겸손"],
+      "quote": "\"우리 가족이 말이야...\"",
+      "emoji": "🧓",
+      "style": {
+        "gradient": "linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)",
+        "number": "④",
+        "css_class": "type-4"
+      },
+      "share": {
+        "title": "나는 인물 위주 인간!",
+        "description": "관계 중심의 소통가",
+        "hashtags": ["#인물위주인간", "#가족중심", "#관계지향", "#대화스타일테스트"]
+      }
+    },
+    "E": {
+      "code": "E",
+      "title": "타임머신 인간",
+      "subtitle": "시간의 기록자",
+      "description": "기억을 시간표처럼 정확하게 저장하는 당신. \"그때가 몇 년이었지\"부터 시작해서 시간과 장소를 정확히 기억하며 이야기하는 놀라운 기억력의 소유자입니다.",
+      "keywords": ["정확한 기억", "시간 감각", "디테일", "체계적", "신뢰성"],
+      "quote": "\"그때가 정확히 언제였냐면...\"",
+      "emoji": "⏳",
+      "style": {
+        "gradient": "linear-gradient(135deg, #fd79a8 0%, #e84393 100%)",
+        "number": "⑤",
+        "css_class": "type-5"
+      },
+      "share": {
+        "title": "나는 타임머신 인간!",
+        "description": "시간의 기록자",
+        "hashtags": ["#타임머신인간", "#정확한기억", "#시간감각", "#대화스타일테스트"]
+      }
+    },
+    "F": {
+      "code": "F",
+      "title": "원칙형 인간",
+      "subtitle": "신념의 기둥",
+      "description": "\"원래 나는 말이지\"로 시작하는 확고한 철학을 가진 당신. 자신만의 원칙과 신념을 바탕으로 일관성 있게 소통하는 단단한 사람입니다.",
+      "keywords": ["신념", "원칙", "일관성", "철학", "단단함"],
+      "quote": "\"원래 나는 이런 사람이야\"",
+      "emoji": "🧱",
+      "style": {
+        "gradient": "linear-gradient(135deg, #00b894 0%, #00a085 100%)",
+        "number": "⑥",
+        "css_class": "type-6"
+      },
+      "share": {
+        "title": "나는 원칙형 인간!",
+        "description": "신념의 기둥",
+        "hashtags": ["#원칙형인간", "#신념", "#철학", "#대화스타일테스트"]
+      }
+    },
+    "G": {
+      "code": "G",
+      "title": "보고서 인간",
+      "subtitle": "정보 전달의 달인",
+      "description": "감정보다는 사실과 정보 중심으로 소통하는 당신. 명확하고 간결하게 핵심만 전달하는 효율적인 커뮤니케이터입니다. 불필요한 감정 표현은 줄이고 실용적인 대화를 선호해요.",
+      "keywords": ["사실 중심", "효율성", "명확함", "간결함", "실용성"],
+      "quote": "\"요점만 말하자면...\"",
+      "emoji": "📊",
+      "style": {
+        "gradient": "linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)",
+        "number": "⑦",
+        "css_class": "type-7"
+      },
+      "share": {
+        "title": "나는 보고서 인간!",
+        "description": "정보 전달의 달인",
+        "hashtags": ["#보고서인간", "#사실중심", "#효율성", "#대화스타일테스트"]
+      }
+    },
+    "H": {
+      "code": "H",
+      "title": "혼잣말 인간",
+      "subtitle": "내면 탐구의 전문가",
+      "description": "자기 반성과 성찰을 즐기는 당신. \"그땐 내가 참 바보였지\" 같은 자기 분석을 자주 하며, 내면의 이야기를 솔직하게 풀어내는 진정한 자아 탐구자입니다.",
+      "keywords": ["자기 성찰", "솔직함", "내면 탐구", "자기 분석", "진정성"],
+      "quote": "\"생각해보니 내가...\"",
+      "emoji": "🪞",
+      "style": {
+        "gradient": "linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)",
+        "number": "⑧",
+        "css_class": "type-8"
+      },
+      "share": {
+        "title": "나는 혼잣말 인간!",
+        "description": "내면 탐구의 전문가",
+        "hashtags": ["#혼잣말인간", "#자기성찰", "#내면탐구", "#대화스타일테스트"]
+      }
+    },
+    "I": {
+      "code": "I",
+      "title": "토크쇼 인간",
+      "subtitle": "대화의 진행자",
+      "description": "질문부터 진행까지 모든 것을 주도하는 당신. 자연스럽게 대화를 이끌어가고, 상대방의 이야기를 끌어내는 타고난 진행자의 기질을 가지고 있습니다.",
+      "keywords": ["주도력", "진행력", "리더십", "사교성", "적극성"],
+      "quote": "\"그런데 말이야, 너는 어때?\"",
+      "emoji": "🎙️",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ff7675 0%, #d63031 100%)",
+        "number": "⑨",
+        "css_class": "type-9"
+      },
+      "share": {
+        "title": "나는 토크쇼 인간!",
+        "description": "대화의 진행자",
+        "hashtags": ["#토크쇼인간", "#주도력", "#리더십", "#대화스타일테스트"]
+      }
+    },
+    "J": {
+      "code": "J",
+      "title": "회피 개그 인간",
+      "subtitle": "유머의 마법사",
+      "description": "진지한 상황을 유머로 풀어내는 당신. 어색하거나 무거운 분위기가 되면 자연스럽게 농담으로 분위기를 전환시키는 타고난 분위기 메이커입니다.",
+      "keywords": ["유머", "분위기 전환", "회피", "재치", "센스"],
+      "quote": "\"아, 이 무슨 진지한 얘기야~\"",
+      "emoji": "🐸",
+      "style": {
+        "gradient": "linear-gradient(135deg, #00cec9 0%, #55a3ff 100%)",
+        "number": "⑩",
+        "css_class": "type-10"
+      },
+      "share": {
+        "title": "나는 회피 개그 인간!",
+        "description": "유머의 마법사",
+        "hashtags": ["#회피개그인간", "#유머", "#분위기전환", "#대화스타일테스트"]
+      }
+    }
+  }
+} 

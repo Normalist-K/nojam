@@ -99,11 +99,17 @@
     </div>
 
     <!-- 다시 테스트하기 -->
-    <div class="text-center mb-6">
-      <a href="/quiz{% if quiz_id %}?quiz_id={{ quiz_id }}{% endif %}" 
-         class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-        다시 테스트하기
-      </a>
+    <div class="text-center mb-6 space-y-3">
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="/quiz{% if quiz_id %}?quiz_id={{ quiz_id }}{% endif %}" 
+           class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+          다시 테스트하기
+        </a>
+        <a href="/" 
+           class="inline-block bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+          다른 테스트 해보기
+        </a>
+      </div>
     </div>
 
     <!-- 답변 JSON (디버그용) -->

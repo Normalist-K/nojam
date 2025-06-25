@@ -34,6 +34,43 @@ def get_repo() -> AnswerRepository:
     return AnswerRepository(db_path="nojam.sqlite3")
 
 
+@router.get("/", response_class=HTMLResponse)
+async def home(request: Request) -> HTMLResponse:
+    """퀴즈 선택 홈페이지."""
+    try:
+        loader = get_quiz_loader()
+        available_quizzes = loader.get_available_quizzes()
+
+        # 퀴즈 정보 로드
+        quiz_list = []
+        for quiz_id in available_quizzes:
+            try:
+                quiz_data = loader.load_quiz(quiz_id)
+                quiz_list.append(
+                    {
+                        "id": quiz_id,
+                        "title": quiz_data.meta.title,
+                        "description": quiz_data.meta.description,
+                        "question_count": len(quiz_data.questions),
+                        "result_count": len(quiz_data.results),
+                        "target_age": quiz_data.meta.target_age,
+                    }
+                )
+            except Exception as e:
+                logger.warning(f"퀴즈 정보 로드 실패: {quiz_id} - {e}")
+                continue
+
+        context = {"quizzes": quiz_list}
+        logger.info(f"퀴즈 선택 페이지 로드: {len(quiz_list)}개 퀴즈 사용 가능")
+
+        return templates.TemplateResponse(request, "home.html", context)
+
+    except Exception as e:
+        logger.error(f"퀴즈 목록 로드 실패: {e}")
+        # 에러 시 기본 퀴즈로 리다이렉트
+        return RedirectResponse(url="/quiz?quiz_id=mind-age-test", status_code=302)
+
+
 @router.get("/quiz", response_class=HTMLResponse)
 async def quiz(
     request: Request, quiz_id: str | None = Query(None, description="사용할 퀴즈 ID")
@@ -122,7 +159,11 @@ async def submit(
 
     await repo.init()
     await repo.add(
-        id=answer_id, answers_json=answers, result_type=result_type, ua_hash=ua_hash
+        id=answer_id,
+        answers_json=answers,
+        result_type=result_type,
+        quiz_id=target_quiz_id or "mind-age-test",
+        ua_hash=ua_hash,
     )
     await repo.close()
 
@@ -152,6 +193,7 @@ async def result(
 
     result_type = record["result_type"]
     answers = json.loads(record["answers_json"])
+    quiz_id = record.get("quiz_id", "mind-age-test")
 
     # 결과 상세 정보 로드
     result_details = None
@@ -159,20 +201,29 @@ async def result(
     quiz_data = None
 
     try:
-        # 기본 퀴즈에서 결과 정보 로드 시도
+        # 저장된 퀴즈 ID로 결과 정보 로드
         loader = get_quiz_loader()
-        quiz_data = loader.load_quiz("mind-age-test")
+        quiz_data = loader.load_quiz(quiz_id)
 
         if result_type in quiz_data.results:
             result_details = quiz_data.results[result_type]
 
         # 점수 분포 계산
-        score_breakdown = get_score_breakdown(answers, "mind-age-test")
+        score_breakdown = get_score_breakdown(answers, quiz_id)
 
-        logger.info(f"결과 상세 로드 완료: {result_type}")
+        logger.info(f"결과 상세 로드 완료: {result_type} (퀴즈: {quiz_id})")
 
     except Exception as e:
         logger.warning(f"JSON 기반 결과 로드 실패, 기본 정보만 표시: {e}")
+
+        # 폴백: 기본 퀴즈로 시도
+        try:
+            quiz_data = loader.load_quiz("mind-age-test")
+            if result_type in quiz_data.results:
+                result_details = quiz_data.results[result_type]
+            score_breakdown = get_score_breakdown(answers, "mind-age-test")
+        except Exception:
+            pass
 
     context = {
         "result_type": result_type,
@@ -185,7 +236,7 @@ async def result(
     return templates.TemplateResponse(request, "result.html", context)
 
 
-@router.get("/api/quizzes", response_class=dict)
+@router.get("/api/quizzes")
 async def list_quizzes():
     """사용 가능한 퀴즈 목록 API."""
     try:
@@ -216,7 +267,7 @@ async def list_quizzes():
         return {"quizzes": [], "error": str(e)}
 
 
-@router.get("/api/quiz/{quiz_id}", response_class=dict)
+@router.get("/api/quiz/{quiz_id}")
 async def get_quiz_info(quiz_id: str):
     """특정 퀴즈 정보 API."""
     try:

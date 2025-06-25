@@ -39,9 +39,8 @@ class AnswerRepository:
                     id TEXT PRIMARY KEY,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     answers_json TEXT NOT NULL,
-                    result_type TEXT CHECK(result_type IN (
-                        '7080','IMF','ACT','DRM','PHONE','ANA','TREND','JUNK'
-                    )),
+                    result_type TEXT NOT NULL,
+                    quiz_id TEXT DEFAULT 'mind-age-test',
                     ua_hash CHAR(64)
                 );
                 """
@@ -55,19 +54,18 @@ class AnswerRepository:
         answers_json: str | dict[str, Any],
         result_type: str,
         ua_hash: str,
+        quiz_id: str = "mind-age-test",
     ) -> None:
         """레코드 삽입."""
-        if result_type not in RESULT_TYPES:
-            raise ValueError("Invalid result_type")
         if isinstance(answers_json, dict):
             answers_json = json.dumps(answers_json, ensure_ascii=False)
         conn = await self._get_conn()
         await conn.execute(
             """
-            INSERT INTO answers (id, answers_json, result_type, ua_hash)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO answers (id, answers_json, result_type, quiz_id, ua_hash)
+            VALUES (?, ?, ?, ?, ?)
             """,
-            (id, answers_json, result_type, ua_hash),
+            (id, answers_json, result_type, quiz_id, ua_hash),
         )
         await conn.commit()
 

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from nojam.settings import configure_logging
 
 configure_logging()

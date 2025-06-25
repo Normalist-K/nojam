@@ -1,7 +1,7 @@
 """외부 SDK Stub 테스트."""
 from __future__ import annotations
 
-from nojam.external import kakao_stub, adsense_stub
+from nojam.external import adsense_stub, kakao_stub
 
 
 def test_kakao_share_stub() -> None:

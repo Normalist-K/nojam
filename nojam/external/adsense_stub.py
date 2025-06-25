@@ -4,9 +4,7 @@
 """
 from __future__ import annotations
 
-from typing import List, Dict
-
-_RENDERED_SLOTS: List[Dict[str, str]] = []
+_RENDERED_SLOTS: list[dict[str, str]] = []
 
 
 def render_ad(slot_id: str) -> dict[str, str]:

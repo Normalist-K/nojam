@@ -8,7 +8,7 @@ import uuid
 
 import pytest
 
-from nojam.db.repository import AnswerRepository, RESULT_TYPES
+from nojam.db.repository import RESULT_TYPES, AnswerRepository
 
 
 @pytest.mark.asyncio

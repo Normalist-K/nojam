@@ -3,9 +3,10 @@ from __future__ import annotations
 
 import json
 from io import StringIO
-from typing import Any, Dict
+from typing import Any
 
 import structlog
+
 import nojam.settings as settings
 
 
@@ -23,7 +24,7 @@ def _capture_log() -> tuple[StringIO, Any]:
 def test_ga4_log_helper() -> None:
     stream, _ = _capture_log()
     settings.log_ga4_event("result_generated", {"type": "7080"})
-    data: Dict[str, Any] = json.loads(stream.getvalue())
+    data: dict[str, Any] = json.loads(stream.getvalue())
     assert data["event"] == "result_generated"
     assert data["type"] == "7080"
 

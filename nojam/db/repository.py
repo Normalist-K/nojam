@@ -6,8 +6,8 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import aiosqlite
 
@@ -39,7 +39,9 @@ class AnswerRepository:
                     id TEXT PRIMARY KEY,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     answers_json TEXT NOT NULL,
-                    result_type TEXT CHECK(result_type IN ('7080','IMF','ACT','DRM','PHONE','ANA','TREND','JUNK')),
+                    result_type TEXT CHECK(result_type IN (
+                        '7080','IMF','ACT','DRM','PHONE','ANA','TREND','JUNK'
+                    )),
                     ua_hash CHAR(64)
                 );
                 """
@@ -99,7 +101,7 @@ class AnswerRepository:
             await self._conn.close()
             self._conn = None
 
-    async def __aenter__(self) -> "AnswerRepository":
+    async def __aenter__(self) -> AnswerRepository:
         return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:  # type: ignore[override]

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from collections import Counter
-from typing import Dict, Mapping, Optional
+from collections.abc import Mapping
 
 from .loader import get_quiz_loader
 from .scoring import ScoringEngine
@@ -43,7 +43,7 @@ RESULT_TYPES = {
 
 
 def calculate_result_type(
-    answers: Mapping[str, str], quiz_id: Optional[str] = None
+    answers: Mapping[str, str], quiz_id: str | None = None
 ) -> str:
     """사용자 선택지를 받아 최다 득점 결과 코드를 반환.
 
@@ -107,8 +107,8 @@ def calculate_result_with_json(answers: Mapping[str, str], quiz_id: str) -> str:
 
 
 def get_score_breakdown(
-    answers: Mapping[str, str], quiz_id: Optional[str] = None
-) -> Dict[str, int]:
+    answers: Mapping[str, str], quiz_id: str | None = None
+) -> dict[str, int]:
     """결과 유형별 점수 분포를 반환한다.
 
     매개변수
@@ -148,7 +148,7 @@ def get_score_breakdown(
     return _calculate_legacy_breakdown(answers)
 
 
-def _normalize_answers(answers: Mapping[str, str], quiz) -> Dict[str, str]:
+def _normalize_answers(answers: Mapping[str, str], quiz) -> dict[str, str]:
     """답변 형식을 새로운 형식으로 정규화한다.
 
     기존: {"q1": "A", "q2": "B"}
@@ -211,7 +211,7 @@ def _calculate_legacy_result(answers: Mapping[str, str]) -> str:
     return winners[0]
 
 
-def _calculate_legacy_breakdown(answers: Mapping[str, str]) -> Dict[str, int]:
+def _calculate_legacy_breakdown(answers: Mapping[str, str]) -> dict[str, int]:
     """기존 하드코딩된 로직으로 점수 분포를 계산한다."""
     counter: Counter[str] = Counter()
 

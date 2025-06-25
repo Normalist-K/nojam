@@ -7,9 +7,8 @@ from __future__ import annotations
 
 from datetime import date
 from enum import Enum
-from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class ScoringMethod(str, Enum):
@@ -38,10 +37,10 @@ class QuizMeta(BaseModel):
         ..., min_length=1, max_length=500, description="테스트 설명"
     )
     version: str = Field(..., pattern=r"^\d+\.\d+\.\d+$", description="버전")
-    author: Optional[str] = Field(None, description="작성자")
-    created_at: Optional[date] = Field(None, description="생성일")
-    estimated_time: Optional[str] = Field(None, description="예상 소요 시간")
-    target_age: Optional[str] = Field(None, description="대상 연령")
+    author: str | None = Field(None, description="작성자")
+    created_at: date | None = Field(None, description="생성일")
+    estimated_time: str | None = Field(None, description="예상 소요 시간")
+    target_age: str | None = Field(None, description="대상 연령")
 
 
 class QuizConfig(BaseModel):
@@ -68,15 +67,16 @@ class Question(BaseModel):
     id: str = Field(..., pattern=r"^q\d+$", description="문항 ID")
     text: str = Field(..., min_length=1, max_length=200, description="문항 텍스트")
     type: QuestionType = Field(..., description="문항 유형")
-    choices: List[Choice] = Field(
-        ..., min_items=2, max_items=10, description="선택지 목록"
+    choices: list[Choice] = Field(
+        ..., min_length=2, max_length=10, description="선택지 목록"
     )
 
-    @validator("choices")
-    def validate_choices(cls, v, values):
+    @field_validator("choices")
+    @classmethod
+    def validate_choices(cls, v, info):
         """선택지 ID가 문항 ID와 일치하는지 검증."""
-        if "id" in values:
-            question_id = values["id"]
+        if "id" in info.data:
+            question_id = info.data["id"]
             for choice in v:
                 if not choice.id.startswith(f"{question_id}_"):
                     raise ValueError(
@@ -98,13 +98,13 @@ class ResultStyle(BaseModel):
 class ShareInfo(BaseModel):
     """공유 정보."""
 
-    title: Optional[str] = Field(
+    title: str | None = Field(
         None, min_length=1, max_length=100, description="공유 제목"
     )
-    description: Optional[str] = Field(
+    description: str | None = Field(
         None, min_length=1, max_length=200, description="공유 설명"
     )
-    hashtags: Optional[List[str]] = Field(None, description="해시태그")
+    hashtags: list[str] | None = Field(None, description="해시태그")
 
 
 class Result(BaseModel):
@@ -114,66 +114,69 @@ class Result(BaseModel):
     title: str = Field(..., min_length=1, max_length=50, description="결과 제목")
     subtitle: str = Field(..., min_length=1, max_length=100, description="결과 부제목")
     description: str = Field(..., min_length=1, max_length=500, description="결과 설명")
-    keywords: List[str] = Field(
-        ..., min_items=1, max_items=5, description="대표 키워드"
+    keywords: list[str] = Field(
+        ..., min_length=1, max_length=5, description="대표 키워드"
     )
     quote: str = Field(..., min_length=1, max_length=100, description="대표 대사")
     emoji: str = Field(..., description="대표 이모지")
     style: ResultStyle = Field(..., description="카드 스타일 정보")
-    share: Optional[ShareInfo] = Field(None, description="공유 정보")
+    share: ShareInfo | None = Field(None, description="공유 정보")
 
 
 class Analytics(BaseModel):
     """분석 설정."""
 
     enabled: bool = Field(True, description="분석 활성화")
-    events: Optional[List[str]] = Field(None, description="추적할 이벤트")
+    events: list[str] | None = Field(None, description="추적할 이벤트")
 
 
 class Quiz(BaseModel):
     """완전한 퀴즈 정의."""
 
-    schema_: Optional[str] = Field(
+    model_config = ConfigDict(populate_by_name=True)
+
+    schema_: str | None = Field(
         None, alias="$schema", description="JSON Schema 참조"
     )
     meta: QuizMeta = Field(..., description="테스트 메타데이터")
     config: QuizConfig = Field(..., description="테스트 설정")
-    questions: List[Question] = Field(..., min_items=1, description="문항 목록")
-    results: Dict[str, Result] = Field(
-        ..., min_properties=2, description="결과 유형 정의"
-    )
-    analytics: Optional[Analytics] = Field(None, description="분석 설정")
+    questions: list[Question] = Field(..., min_length=1, description="문항 목록")
+    results: dict[str, Result] = Field(..., description="결과 유형 정의")
+    analytics: Analytics | None = Field(None, description="분석 설정")
 
-    @validator("questions")
-    def validate_question_count(cls, v, values):
+    @field_validator("questions")
+    @classmethod
+    def validate_question_count(cls, v, info):
         """문항 수가 config와 일치하는지 검증."""
-        if "config" in values:
-            expected_count = values["config"].question_count
+        if "config" in info.data:
+            expected_count = info.data["config"].question_count
             if len(v) != expected_count:
                 raise ValueError(
                     f"문항 수가 일치하지 않습니다: 설정={expected_count}, 실제={len(v)}"
                 )
         return v
 
-    @validator("results")
-    def validate_result_types(cls, v, values):
+    @field_validator("results")
+    @classmethod
+    def validate_result_types(cls, v, info):
         """결과 유형 수가 config와 일치하는지 검증."""
-        if "config" in values:
-            expected_count = values["config"].result_types
+        if "config" in info.data:
+            expected_count = info.data["config"].result_types
             if len(v) != expected_count:
                 raise ValueError(
                     f"결과 유형 수가 일치하지 않습니다: 설정={expected_count}, 실제={len(v)}"
                 )
         return v
 
-    @validator("results")
-    def validate_result_codes(cls, v, values):
+    @field_validator("results")
+    @classmethod
+    def validate_result_codes(cls, v, info):
         """모든 선택지의 result_type이 results에 정의되어 있는지 검증."""
-        if "questions" in values:
+        if "questions" in info.data:
             defined_types = set(v.keys())
             used_types = set()
 
-            for question in values["questions"]:
+            for question in info.data["questions"]:
                 for choice in question.choices:
                     used_types.add(choice.result_type)
 
@@ -182,6 +185,3 @@ class Quiz(BaseModel):
                 raise ValueError(f"정의되지 않은 결과 유형: {undefined_types}")
 
         return v
-
-    class Config:
-        allow_population_by_field_name = True

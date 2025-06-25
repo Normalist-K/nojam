@@ -1,15 +1,15 @@
 """Quiz models for JSON-driven platform."""
 
 from .quiz import (
-    Quiz,
-    QuizMeta,
-    QuizConfig,
-    Question,
+    Analytics,
     Choice,
+    Question,
+    Quiz,
+    QuizConfig,
+    QuizMeta,
     Result,
     ResultStyle,
     ShareInfo,
-    Analytics,
 )
 
 __all__ = [

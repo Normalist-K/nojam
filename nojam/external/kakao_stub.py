@@ -4,9 +4,7 @@
 """
 from __future__ import annotations
 
-from typing import List, Tuple
-
-_CALL_HISTORY: List[Tuple[str, dict]] = []
+_CALL_HISTORY: list[tuple[str, dict]] = []
 
 
 def share_link(title: str, url: str) -> dict[str, str]:

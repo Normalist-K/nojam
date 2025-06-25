@@ -11,15 +11,14 @@ import json
 import logging
 import uuid
 from pathlib import Path
-from typing import Annotated, Dict, Optional
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, Query
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from nojam.db.repository import AnswerRepository
-from nojam.services.quiz import calculate_result_type, get_score_breakdown
 from nojam.services.loader import get_quiz_loader
+from nojam.services.quiz import calculate_result_type, get_score_breakdown
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +36,7 @@ def get_repo() -> AnswerRepository:
 
 @router.get("/quiz", response_class=HTMLResponse)
 async def quiz(
-    request: Request, quiz_id: Optional[str] = Query(None, description="사용할 퀴즈 ID")
+    request: Request, quiz_id: str | None = Query(None, description="사용할 퀴즈 ID")
 ) -> HTMLResponse:
     """동적 퀴즈 폼 렌더."""
     # 사용할 퀴즈 결정
@@ -73,7 +72,7 @@ async def quiz(
 async def submit(
     request: Request,
     repo: AnswerRepository = Depends(get_repo),
-    quiz_id: Optional[str] = Form(None),
+    quiz_id: str | None = Form(None),
     # 동적 폼 필드 처리를 위해 Form 데이터를 직접 파싱
 ):
     """동적 퀴즈 제출 처리."""
@@ -83,7 +82,7 @@ async def submit(
     target_quiz_id = form_data.get("quiz_id") or quiz_id
 
     # 답변 데이터 추출 (q1, q2, ... 또는 동적 필드)
-    answers: Dict[str, str] = {}
+    answers: dict[str, str] = {}
 
     # 기존 하드코딩된 형식 지원
     for i in range(1, 11):
@@ -225,8 +224,8 @@ async def get_quiz_info(quiz_id: str):
         quiz_data = loader.load_quiz(quiz_id)
 
         return {
-            "meta": quiz_data.meta.dict(),
-            "config": quiz_data.config.dict(),
+            "meta": quiz_data.meta.model_dump(),
+            "config": quiz_data.config.model_dump(),
             "question_count": len(quiz_data.questions),
             "result_types": list(quiz_data.results.keys()),
         }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import Any, Dict
+from typing import Any
 
 import structlog
 
@@ -31,13 +31,13 @@ def configure_logging() -> None:
 # ------------------------------------------------------------
 
 
-def log_ga4_event(event_name: str, params: Dict[str, Any] | None = None) -> None:
+def log_ga4_event(event_name: str, params: dict[str, Any] | None = None) -> None:
     """GA4 이벤트 로깅 (Stub)."""
     structlog.get_logger("ga4").info(event_name, **(params or {}))
 
 
 def log_ad_metric(
-    metric: str, value: float | int, extra: Dict[str, Any] | None = None
+    metric: str, value: float | int, extra: dict[str, Any] | None = None
 ) -> None:
     """광고 수익·RPM·CTR 등 지표 로깅."""
     data = {"metric": metric, "value": value}

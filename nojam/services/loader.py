@@ -8,7 +8,6 @@ from __future__ import annotations
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Optional
 
 from ..models.quiz import Quiz
 
@@ -26,8 +25,8 @@ class QuizLoader:
             퀴즈 JSON 파일들이 저장된 디렉토리 경로
         """
         self.quiz_dir = Path(quiz_dir)
-        self._cache: Dict[str, Quiz] = {}
-        self._file_timestamps: Dict[str, float] = {}
+        self._cache: dict[str, Quiz] = {}
+        self._file_timestamps: dict[str, float] = {}
 
     def load_quiz(self, quiz_id: str, force_reload: bool = False) -> Quiz:
         """퀴즈 JSON 파일을 로드하고 파싱한다.
@@ -75,7 +74,7 @@ class QuizLoader:
                 raw_data = json.load(f)
 
             # Pydantic 모델로 검증 및 파싱
-            quiz = Quiz.parse_obj(raw_data)
+            quiz = Quiz.model_validate(raw_data)
 
             # 캐시 업데이트
             self._cache[quiz_id] = quiz
@@ -103,7 +102,7 @@ class QuizLoader:
         quiz_files = list(self.quiz_dir.glob("*.json"))
         return [f.stem for f in quiz_files]
 
-    def clear_cache(self, quiz_id: Optional[str] = None) -> None:
+    def clear_cache(self, quiz_id: str | None = None) -> None:
         """캐시를 비운다.
 
         매개변수
@@ -141,7 +140,7 @@ class QuizLoader:
 
 
 # 전역 로더 인스턴스
-_loader: Optional[QuizLoader] = None
+_loader: QuizLoader | None = None
 
 
 def get_quiz_loader() -> QuizLoader:

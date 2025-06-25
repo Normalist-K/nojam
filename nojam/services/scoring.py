@@ -6,7 +6,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Dict, Mapping
+from collections.abc import Mapping
 
 from ..models.quiz import Quiz, ScoringMethod
 
@@ -111,7 +111,7 @@ class ScoringEngine:
         # TODO: Phase 2에서 구현
         raise NotImplementedError("Percentage 방식은 Phase 2에서 구현 예정입니다.")
 
-    def get_score_breakdown(self, answers: Mapping[str, str]) -> Dict[str, int]:
+    def get_score_breakdown(self, answers: Mapping[str, str]) -> dict[str, int]:
         """결과 유형별 점수 분포를 반환한다.
 
         매개변수

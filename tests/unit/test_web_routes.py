@@ -1,8 +1,6 @@
 """Web 라우트 최소 테스트 (FastAPI TestClient)."""
 from __future__ import annotations
 
-import uuid
-
 from fastapi.testclient import TestClient
 
 from nojam.main import app

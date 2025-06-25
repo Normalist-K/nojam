@@ -25,8 +25,8 @@ jobs:
       - name: Sync dependencies
         run: uv sync
 
-      - name: Install Playwright browsers
-        run: uv run playwright install --with-deps
+      # - name: Install Playwright browsers
+      #   run: uv run playwright install --with-deps
 
       - name: Lint & format (ruff)
         run: uv run ruff check .

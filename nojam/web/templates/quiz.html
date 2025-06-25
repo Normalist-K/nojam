@@ -1,21 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}심리테스트 – 질문{% endblock %}
+{% block title %}
+{% if quiz %}{{ quiz.meta.title }}{% else %}심리테스트 – 질문{% endif %}
+{% endblock %}
 
 {% block content %}
-  <h1 class="text-2xl font-bold mb-6 text-center">10문항 심리테스트</h1>
-  <form method="post" action="/submit" class="space-y-6">
-    {% for i in range(1,11) %}
-    <div class="border rounded p-3 bg-white shadow">
-      <label class="block font-medium mb-2">문항 {{ i }}</label>
-      <select name="q{{ i }}" required class="border p-2 w-full rounded">
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-      </select>
+  {% if quiz %}
+  <!-- JSON 기반 동적 퀴즈 -->
+  <div class="max-w-2xl mx-auto">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold mb-4">{{ quiz.meta.title }}</h1>
+      <p class="text-gray-600 mb-2">{{ quiz.meta.description }}</p>
+      {% if quiz.meta.estimated_time %}
+      <p class="text-sm text-gray-500">예상 소요 시간: {{ quiz.meta.estimated_time }}</p>
+      {% endif %}
+      {% if quiz.config.show_progress %}
+      <div class="mt-4">
+        <div class="bg-gray-200 rounded-full h-2">
+          <div id="progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <p id="progress-text" class="text-sm text-gray-500 mt-2">0 / {{ quiz.config.question_count }} 완료</p>
+      </div>
+      {% endif %}
     </div>
-    {% endfor %}
-    <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-semibold">결과 보기</button>
-  </form>
+
+    <form method="post" action="/submit" class="space-y-6" id="quiz-form">
+      <input type="hidden" name="quiz_id" value="{{ quiz_id }}">
+      
+      {% for question in quiz.questions %}
+      <div class="border rounded-lg p-6 bg-white shadow-sm question-block" data-question="{{ loop.index }}">
+        <label class="block font-semibold text-lg mb-4">
+          {{ loop.index }}. {{ question.text }}
+        </label>
+        
+        {% if question.type.value == "single_choice" %}
+        <div class="space-y-3">
+          {% for choice in question.choices %}
+          <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+            <input 
+              type="radio" 
+              name="{{ question.id }}" 
+              value="{{ choice.id }}" 
+              class="mr-3 text-blue-600 focus:ring-blue-500"
+              required
+              onchange="updateProgress()"
+            >
+            <span class="text-gray-700">{{ choice.text }}</span>
+          </label>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+      
+      <div class="text-center pt-6">
+        <button 
+          type="submit" 
+          id="submit-btn"
+          class="w-full max-w-md bg-blue-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+          disabled
+        >
+          결과 보기
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // 진행률 업데이트
+    function updateProgress() {
+      const totalQuestions = {{ quiz.config.question_count }};
+      const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+      const progressPercent = (answeredQuestions / totalQuestions) * 100;
+      
+      {% if quiz.config.show_progress %}
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+      
+      if (progressBar) {
+        progressBar.style.width = progressPercent + '%';
+      }
+      if (progressText) {
+        progressText.textContent = answeredQuestions + ' / ' + totalQuestions + ' 완료';
+      }
+      {% endif %}
+      
+      // 모든 문항 완료시 제출 버튼 활성화
+      const submitBtn = document.getElementById('submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = answeredQuestions < totalQuestions;
+      }
+    }
+    
+    // 페이지 로드시 진행률 초기화
+    document.addEventListener('DOMContentLoaded', updateProgress);
+  </script>
+
+  {% else %}
+  <!-- 기존 하드코딩된 폼 (폴백) -->
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6 text-center">10문항 심리테스트</h1>
+    <form method="post" action="/submit" class="space-y-6">
+      {% for i in range(1,11) %}
+      <div class="border rounded p-4 bg-white shadow">
+        <label class="block font-medium mb-2">문항 {{ i }}</label>
+        <select name="q{{ i }}" required class="border p-2 w-full rounded">
+          <option value="">선택하세요</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="C">C</option>
+          <option value="D">D</option>
+        </select>
+      </div>
+      {% endfor %}
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded font-semibold">결과 보기</button>
+    </form>
+  </div>
+  {% endif %}
 {% endblock %}

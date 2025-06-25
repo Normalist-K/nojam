@@ -1,31 +1,150 @@
 {% extends "base.html" %}
 
-{% block title %}심리테스트 결과{% endblock %}
+{% block title %}
+{% if result_details %}{{ result_details.title }} - 심리테스트 결과{% else %}심리테스트 결과{% endif %}
+{% endblock %}
 
 {% block content %}
-  <h1 class="text-2xl font-bold mb-4 text-center">당신의 결과는</h1>
+  <div class="max-w-2xl mx-auto">
+    {% if result_details %}
+    <!-- JSON 기반 동적 결과 카드 -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold mb-4">당신의 결과는</h1>
+    </div>
 
-  <!-- 결과 카드 이미지 -->
-  <div class="mb-6">
-    <img src="/static/cards/{{ result_type }}.jpg" alt="결과 카드" class="w-full rounded shadow" />
+    <!-- 동적 결과 카드 -->
+    <div class="result-card {{ result_details.style.css_class }} mb-8 p-8 rounded-2xl shadow-lg text-white text-center" 
+         style="background: {{ result_details.style.gradient }};">
+      <div class="mb-4">
+        <span class="text-6xl">{{ result_details.emoji }}</span>
+      </div>
+      <div class="mb-2">
+        <span class="inline-flex items-center justify-center w-8 h-8 bg-white bg-opacity-20 rounded-full text-sm font-bold">
+          {{ result_details.style.number }}
+        </span>
+      </div>
+      <h2 class="text-2xl font-bold mb-2">{{ result_details.title }}</h2>
+      <h3 class="text-lg mb-4 opacity-90">{{ result_details.subtitle }}</h3>
+      <p class="text-sm leading-relaxed mb-6 opacity-90">{{ result_details.description }}</p>
+      
+      <!-- 대표 키워드 -->
+      <div class="mb-4">
+        {% for keyword in result_details.keywords %}
+        <span class="inline-block bg-white bg-opacity-20 px-3 py-1 rounded-full text-xs font-medium mr-2 mb-2">
+          #{{ keyword }}
+        </span>
+        {% endfor %}
+      </div>
+      
+      <!-- 대표 대사 -->
+      <div class="text-center italic">
+        <span class="text-lg">"{{ result_details.quote }}"</span>
+      </div>
+    </div>
+
+    {% if score_breakdown %}
+    <!-- 점수 분포 -->
+    <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+      <h3 class="text-lg font-semibold mb-4">당신의 성향 분포</h3>
+      <div class="space-y-3">
+        {% for result_type, score in score_breakdown.items() %}
+        {% set result_info = quiz.results[result_type] %}
+        <div class="flex items-center">
+          <div class="w-16 text-sm font-medium">{{ result_info.title }}</div>
+          <div class="flex-1 mx-3">
+            <div class="bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: {{ (score / quiz.config.question_count * 100) | round }}%"></div>
+            </div>
+          </div>
+          <div class="w-12 text-sm text-gray-600 text-right">{{ score }}점</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- 기존 정적 결과 (폴백) -->
+    <div class="text-center mb-8">
+      <h1 class="text-2xl font-bold mb-4">당신의 결과는</h1>
+      <div class="text-xl font-semibold text-blue-600">{{ result_type }}</div>
+    </div>
+
+    <!-- 결과 카드 이미지 (기존 방식) -->
+    <div class="mb-6">
+      <img src="/static/cards/{{ result_type }}.jpg" alt="결과 카드" class="w-full rounded shadow" onerror="this.style.display='none'" />
+    </div>
+    {% endif %}
+
+    <!-- 광고 슬롯 (AdSense Stub) -->
+    <div id="adsense-slot" class="border border-dashed border-gray-400 h-28 flex items-center justify-center mb-6 text-gray-500">
+      광고 영역 (AdSense Stub)
+    </div>
+
+    <!-- 공유 섹션 -->
+    <div class="text-center mb-6">
+      {% if result_details and result_details.share %}
+      <!-- JSON 기반 공유 정보 -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2">친구들과 공유해보세요!</h3>
+        {% if result_details.share.description %}
+        <p class="text-gray-600 text-sm">{{ result_details.share.description }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+      
+      <button id="share-btn" class="bg-yellow-400 hover:bg-yellow-500 px-6 py-3 rounded-lg font-semibold transition-colors">
+        카카오톡 공유
+      </button>
+    </div>
+
+    <!-- 다시 테스트하기 -->
+    <div class="text-center mb-6">
+      <a href="/quiz{% if quiz_id %}?quiz_id={{ quiz_id }}{% endif %}" 
+         class="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+        다시 테스트하기
+      </a>
+    </div>
+
+    <!-- 답변 JSON (디버그용) -->
+    <details class="mb-4">
+      <summary class="cursor-pointer text-sm text-gray-600">선택한 답 보기</summary>
+      <div class="bg-gray-100 p-4 rounded mt-2">
+        <pre class="text-xs overflow-auto">{{ answers | tojson(indent=2) }}</pre>
+        {% if score_breakdown %}
+        <div class="mt-4 pt-4 border-t">
+          <h4 class="text-sm font-semibold mb-2">점수 분포:</h4>
+          <pre class="text-xs">{{ score_breakdown | tojson(indent=2) }}</pre>
+        </div>
+        {% endif %}
+      </div>
+    </details>
   </div>
 
-  <!-- 광고 슬롯 (AdSense Stub) -->
-  <div id="adsense-slot" class="border border-dashed border-gray-400 h-28 flex items-center justify-center mb-6">
-    광고 영역 (Stub)
-  </div>
-
-  <!-- 답변 JSON (디버그용) -->
-  <details class="mb-4">
-    <summary class="cursor-pointer text-sm text-gray-600">선택한 답 보기</summary>
-    <pre class="bg-gray-100 p-2 rounded text-xs">{{ answers | tojson(indent=2) }}</pre>
-  </details>
-
-  <!-- 카카오 공유 버튼 -->
-  <button id="share-btn" class="bg-yellow-400 px-6 py-3 rounded font-semibold">카카오톡 공유</button>
   <script>
-    document.getElementById('share-btn').addEventListener('click', () => {
-      fetch('/stub/kakao/share').then(() => alert('공유 완료 (stub)!'));
+    document.getElementById('share-btn').addEventListener('click', function() {
+      {% if result_details and result_details.share %}
+      const shareTitle = "{{ result_details.share.title or result_details.title }}";
+      const shareDesc = "{{ result_details.share.description or result_details.subtitle }}";
+      {% else %}
+      const shareTitle = "심리테스트 결과";
+      const shareDesc = "나의 결과: {{ result_type }}";
+      {% endif %}
+      
+      fetch('/stub/kakao/share', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          title: shareTitle,
+          description: shareDesc,
+          url: window.location.href
+        })
+      }).then(function() {
+        alert('공유 완료 (stub)!');
+      }).catch(function(error) {
+        console.error('공유 실패:', error);
+        alert('공유에 실패했습니다.');
+      });
     });
   </script>
 {% endblock %}

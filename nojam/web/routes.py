@@ -1,18 +1,27 @@
-"""FastAPI 라우트 정의 (/quiz, /submit, /result)."""
+"""FastAPI 라우트 정의 (/quiz, /submit, /result).
+
+JSON 기반 플랫폼으로 업데이트된 라우트.
+동적 퀴즈 로딩과 결과 렌더링을 지원한다.
+"""
+
 from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import uuid
 from pathlib import Path
-from typing import Annotated, Dict
+from typing import Annotated, Dict, Optional
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from nojam.db.repository import AnswerRepository
-from nojam.services.quiz import calculate_result_type
+from nojam.services.quiz import calculate_result_type, get_score_breakdown
+from nojam.services.loader import get_quiz_loader
+
+logger = logging.getLogger(__name__)
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -27,47 +36,95 @@ def get_repo() -> AnswerRepository:
 
 
 @router.get("/quiz", response_class=HTMLResponse)
-async def quiz(request: Request) -> HTMLResponse:
-    """10문항 폼 렌더."""
-    return templates.TemplateResponse(request, "quiz.html", {})
+async def quiz(
+    request: Request, quiz_id: Optional[str] = Query(None, description="사용할 퀴즈 ID")
+) -> HTMLResponse:
+    """동적 퀴즈 폼 렌더."""
+    # 사용할 퀴즈 결정
+    target_quiz_id = quiz_id or "mind-age-test"
+
+    try:
+        loader = get_quiz_loader()
+        quiz_data = loader.load_quiz(target_quiz_id)
+
+        context = {
+            "quiz": quiz_data,
+            "quiz_id": target_quiz_id,
+        }
+
+        logger.info(f"퀴즈 폼 렌더: {target_quiz_id} (v{quiz_data.meta.version})")
+        return templates.TemplateResponse(request, "quiz.html", context)
+
+    except FileNotFoundError:
+        logger.error(f"퀴즈 파일을 찾을 수 없음: {target_quiz_id}")
+        # 기본 하드코딩된 폼으로 폴백
+        return templates.TemplateResponse(
+            request, "quiz.html", {"quiz": None, "quiz_id": None}
+        )
+    except Exception as e:
+        logger.error(f"퀴즈 로드 실패: {target_quiz_id} - {e}")
+        # 기본 하드코딩된 폼으로 폴백
+        return templates.TemplateResponse(
+            request, "quiz.html", {"quiz": None, "quiz_id": None}
+        )
 
 
 @router.post("/submit")
 async def submit(
-    q1: Annotated[str, Form()],
-    q2: Annotated[str, Form()],
-    q3: Annotated[str, Form()],
-    q4: Annotated[str, Form()],
-    q5: Annotated[str, Form()],
-    q6: Annotated[str, Form()],
-    q7: Annotated[str, Form()],
-    q8: Annotated[str, Form()],
-    q9: Annotated[str, Form()],
-    q10: Annotated[str, Form()],
     request: Request,
     repo: AnswerRepository = Depends(get_repo),
+    quiz_id: Optional[str] = Form(None),
+    # 동적 폼 필드 처리를 위해 Form 데이터를 직접 파싱
 ):
-    answers: Dict[str, str] = {
-        "q1": q1,
-        "q2": q2,
-        "q3": q3,
-        "q4": q4,
-        "q5": q5,
-        "q6": q6,
-        "q7": q7,
-        "q8": q8,
-        "q9": q9,
-        "q10": q10,
-    }
+    """동적 퀴즈 제출 처리."""
+    form_data = await request.form()
 
-    result_type = calculate_result_type(answers)
+    # quiz_id 추출
+    target_quiz_id = form_data.get("quiz_id") or quiz_id
 
+    # 답변 데이터 추출 (q1, q2, ... 또는 동적 필드)
+    answers: Dict[str, str] = {}
+
+    # 기존 하드코딩된 형식 지원
+    for i in range(1, 11):
+        field_name = f"q{i}"
+        if field_name in form_data:
+            answers[field_name] = form_data[field_name]
+
+    # JSON 기반 동적 필드 지원
+    if target_quiz_id:
+        try:
+            loader = get_quiz_loader()
+            quiz_data = loader.load_quiz(target_quiz_id)
+
+            # 퀴즈 정의에 따른 필드 추출
+            for question in quiz_data.questions:
+                qid = question.id
+                if qid in form_data:
+                    answers[qid] = form_data[qid]
+
+        except Exception as e:
+            logger.warning(f"동적 퀴즈 처리 실패, 기존 방식 사용: {e}")
+
+    if not answers:
+        raise HTTPException(status_code=400, detail="답변 데이터가 없습니다.")
+
+    # 결과 계산
+    try:
+        result_type = calculate_result_type(answers, target_quiz_id)
+        logger.info(f"결과 계산 완료: {result_type} (퀴즈: {target_quiz_id})")
+    except Exception as e:
+        logger.error(f"결과 계산 실패: {e}")
+        raise HTTPException(status_code=400, detail=f"결과 계산 실패: {e}")
+
+    # 답변 저장
     answer_id = str(uuid.uuid4())
     ua_hash = hashlib.sha256(request.headers.get("user-agent", "").encode()).hexdigest()
 
-    # 저장
     await repo.init()
-    await repo.add(id=answer_id, answers_json=answers, result_type=result_type, ua_hash=ua_hash)
+    await repo.add(
+        id=answer_id, answers_json=answers, result_type=result_type, ua_hash=ua_hash
+    )
     await repo.close()
 
     return RedirectResponse(url=f"/result/{answer_id}", status_code=302)
@@ -75,6 +132,7 @@ async def submit(
 
 @router.post("/stub/kakao/share")
 async def kakao_share_stub():
+    """카카오톡 공유 스텁."""
     from nojam.external.kakao_stub import share_link
 
     share_link("테스트", "https://example.com")
@@ -82,18 +140,100 @@ async def kakao_share_stub():
 
 
 @router.get("/result/{answer_id}", response_class=HTMLResponse)
-async def result(answer_id: str, request: Request, repo: AnswerRepository = Depends(get_repo)) -> HTMLResponse:
+async def result(
+    answer_id: str, request: Request, repo: AnswerRepository = Depends(get_repo)
+) -> HTMLResponse:
+    """결과 페이지 렌더 (JSON 기반 카드 포함)."""
     await repo.init()
     record = await repo.get(answer_id)
     await repo.close()
+
     if record is None:
         raise HTTPException(status_code=404, detail="결과를 찾을 수 없습니다.")
 
-    return templates.TemplateResponse(
-        request,
-        "result.html",
-        {
-            "result_type": record["result_type"],
-            "answers": json.loads(record["answers_json"]),
-        },
-    )
+    result_type = record["result_type"]
+    answers = json.loads(record["answers_json"])
+
+    # 결과 상세 정보 로드
+    result_details = None
+    score_breakdown = None
+    quiz_data = None
+
+    try:
+        # 기본 퀴즈에서 결과 정보 로드 시도
+        loader = get_quiz_loader()
+        quiz_data = loader.load_quiz("mind-age-test")
+
+        if result_type in quiz_data.results:
+            result_details = quiz_data.results[result_type]
+
+        # 점수 분포 계산
+        score_breakdown = get_score_breakdown(answers, "mind-age-test")
+
+        logger.info(f"결과 상세 로드 완료: {result_type}")
+
+    except Exception as e:
+        logger.warning(f"JSON 기반 결과 로드 실패, 기본 정보만 표시: {e}")
+
+    context = {
+        "result_type": result_type,
+        "answers": answers,
+        "result_details": result_details,
+        "score_breakdown": score_breakdown,
+        "quiz": quiz_data,
+    }
+
+    return templates.TemplateResponse(request, "result.html", context)
+
+
+@router.get("/api/quizzes", response_class=dict)
+async def list_quizzes():
+    """사용 가능한 퀴즈 목록 API."""
+    try:
+        loader = get_quiz_loader()
+        quiz_ids = loader.get_available_quizzes()
+
+        quizzes = []
+        for quiz_id in quiz_ids:
+            try:
+                quiz_data = loader.load_quiz(quiz_id)
+                quizzes.append(
+                    {
+                        "id": quiz_id,
+                        "title": quiz_data.meta.title,
+                        "description": quiz_data.meta.description,
+                        "version": quiz_data.meta.version,
+                        "question_count": quiz_data.config.question_count,
+                        "result_types": quiz_data.config.result_types,
+                    }
+                )
+            except Exception as e:
+                logger.warning(f"퀴즈 {quiz_id} 로드 실패: {e}")
+
+        return {"quizzes": quizzes}
+
+    except Exception as e:
+        logger.error(f"퀴즈 목록 조회 실패: {e}")
+        return {"quizzes": [], "error": str(e)}
+
+
+@router.get("/api/quiz/{quiz_id}", response_class=dict)
+async def get_quiz_info(quiz_id: str):
+    """특정 퀴즈 정보 API."""
+    try:
+        loader = get_quiz_loader()
+        quiz_data = loader.load_quiz(quiz_id)
+
+        return {
+            "meta": quiz_data.meta.dict(),
+            "config": quiz_data.config.dict(),
+            "question_count": len(quiz_data.questions),
+            "result_types": list(quiz_data.results.keys()),
+        }
+
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404, detail=f"퀴즈를 찾을 수 없습니다: {quiz_id}"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"퀴즈 로드 실패: {e}")

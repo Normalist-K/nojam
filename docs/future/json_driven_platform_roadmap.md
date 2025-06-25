@@ -1,4 +1,4 @@
-# JSON-Driven 심리테스트 플랫폼 로드맵 v2.0
+# JSON-Driven 심리테스트 플랫폼 로드맵 v2.1
 
 ## 1. 개요
 
@@ -28,92 +28,79 @@
 │ └─────────────────┘ │    │ └──────────────┘ │    │ └─────────────┘ │
 │                     │    │                  │    │                 │
 │ ┌─────────────────┐ │    │ ┌──────────────┐ │    │ ┌─────────────┐ │
-│ │ Asset Library   │ │    │ │ Admin Tools  │ │    │ │ File Storage│ │
-│ │ - card images   │ │    │ │ - preview    │ │    │ │ - images    │ │
-│ │ - icons         │ │    │ │ - analytics  │ │    │ │ - exports   │ │
+│ │ Card Templates  │ │    │ │ Admin Tools  │ │    │ │ File Storage│ │
+│ │ - HTML/CSS      │ │    │ │ - preview    │ │    │ │ - exports   │ │
+│ │ - dynamic render│ │    │ │ - analytics  │ │    │ │ - backups   │ │
 │ └─────────────────┘ │    │ └──────────────┘ │    │ └─────────────┘ │
 └─────────────────────┘    └──────────────────┘    └─────────────────┘
 ```
 
-### 2.2 JSON 스키마 설계
+### 2.2 결과 카드 렌더링 전략
 
-#### 2.2.1 Quiz Configuration Schema
+#### 2.2.1 HTML 템플릿 기반 동적 렌더링 (채택)
+```
+JSON Data → Jinja2 Template → HTML Card → (Optional) Image Export
+```
+
+**장점**:
+- JSON 데이터 변경 시 즉시 반영
+- SEO 친화적, 텍스트 선택 가능
+- 반응형 디자인 지원
+- 카카오톡 공유 시 OG 태그 활용
+
+**구현 방식**:
+- 기존 card.html의 CSS 스타일을 Jinja2 템플릿으로 변환
+- 결과 카드 스타일 정보를 JSON에 포함
+- 필요시 Puppeteer로 HTML→이미지 변환 기능 추가
+
+### 2.3 JSON 스키마 설계 (v2.1 - 단순화)
+
+#### 2.3.1 Quiz Configuration Schema (실용적 버전)
 ```json
 {
-  "$schema": "https://nojam.com/schemas/quiz-v2.json",
+  "$schema": "https://nojam.com/schemas/quiz-v2.1.json",
   "meta": {
-    "id": "mind_age_v1",
-    "version": "1.0.0",
+    "id": "mind_age_test",
     "title": "🕰️ 나는 어떤 시대형 인간일까?",
     "description": "베이비붐 세대를 위한 심리테스트",
+    "version": "1.0.0",
     "author": "nojam-team",
     "created_at": "2025-01-21",
-    "tags": ["psychology", "generation", "baby-boomer"],
     "estimated_time": "3-5분",
-    "target_age": "50-70",
-    "language": "ko"
+    "target_age": "50-70"
   },
   "config": {
-    "question_count": 10,
+    "question_count": 15,
     "result_types": 8,
-    "scoring_method": "weighted_sum",
+    "scoring_method": "simple_count",  // 단순 카운팅 방식
     "randomize_questions": false,
-    "randomize_choices": false,
-    "allow_skip": false,
-    "show_progress": true,
-    "analytics_enabled": true
-  },
-  "branding": {
-    "primary_color": "#667eea",
-    "secondary_color": "#764ba2",
-    "logo_url": "/assets/logos/mind-age.svg",
-    "og_image": "/assets/og/mind-age-og.jpg",
-    "favicon": "/assets/favicons/mind-age.ico"
+    "show_progress": true
   },
   "questions": [
     {
       "id": "q1",
-      "type": "single_choice",
-      "category": "technology",
       "text": "휴대폰이 고장 났을 때 나는?",
-      "instruction": "가장 가까운 반응을 선택해주세요",
-      "required": true,
+      "type": "single_choice",
       "choices": [
         {
           "id": "q1_a",
           "text": "종이수첩 있으면 돼",
-          "emoji": "📝",
-          "scores": {
-            "ANA": 1,
-            "7080": 0.5
-          }
+          "result_type": "ANA"  // 단순화: 하나의 결과 유형에만 1점
         },
         {
-          "id": "q1_b", 
+          "id": "q1_b",
           "text": "얼른 새폰 찾아봐야지",
-          "emoji": "📱",
-          "scores": {
-            "PHONE": 1,
-            "TREND": 0.3
-          }
+          "result_type": "PHONE"
         },
         {
           "id": "q1_c",
           "text": "고치거나 잠시 안 써도 괜찮아",
-          "emoji": "🔧",
-          "scores": {
-            "7080": 1,
-            "IMF": 0.4
-          }
+          "result_type": "7080"
         },
         {
           "id": "q1_d",
           "text": "폰 없으면 못 살아!!",
-          "emoji": "😱",
-          "scores": {
-            "TREND": 1,
-            "PHONE": 0.6
-          }
+          "result_type": "TREND"
         }
       ]
     }
@@ -124,96 +111,60 @@
       "title": "7080 감성형",
       "subtitle": "통기타, 쎄시봉, 낭만 감성",
       "description": "통기타, 쎄시봉, 낭만 감성의 향수와 추억을 소중히 여기는 로맨틱한 당신",
-      "detailed_description": "당신은 70-80년대의 낭만적인 감성을 간직한 분입니다. 통기타 선율과 쎄시봉의 추억, 그 시절의 순수했던 사랑 이야기들을 그리워하며...",
-      "keywords": ["낭만", "음악", "회상", "추억", "감성"],
+      "keywords": ["낭만", "음악", "회상"],
       "quote": "그땐 말이야, 나이트보다 통기타였지.",
-      "percentage_range": [12, 18],
-      "traits": [
-        {
-          "name": "감수성",
-          "score": 95,
-          "description": "예술과 음악에 대한 깊은 감수성"
-        },
-        {
-          "name": "향수",
-          "score": 90,
-          "description": "과거에 대한 강한 그리움"
-        },
-        {
-          "name": "낭만성",
-          "score": 85,
-          "description": "로맨틱한 상황을 선호"
-        }
-      ],
-      "recommendations": [
-        "통기타 배우기",
-        "7080 음악 감상",
-        "추억의 장소 방문",
-        "일기 쓰기"
-      ],
-      "compatible_types": ["DRM", "JUNK"],
-      "image": {
-        "card_url": "/assets/cards/7080-card.jpg",
-        "background_url": "/assets/backgrounds/7080-bg.jpg",
-        "icon_url": "/assets/icons/7080-icon.svg"
+      "emoji": "🎵",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+        "number": "①",
+        "css_class": "type-1"
       },
       "share": {
         "title": "나는 7080 감성형!",
         "description": "통기타와 낭만을 사랑하는 감성파",
         "hashtags": ["#7080감성", "#통기타", "#낭만", "#마음나이테스트"]
       }
+    },
+    "IMF": {
+      "code": "IMF",
+      "title": "IMF 생존형",
+      "subtitle": "위기 속 실용주의, 절약 우선",
+      "description": "위기 속 실용주의, 절약 우선 현실적이고 책임감 강한 든든한 당신",
+      "keywords": ["절약", "현실", "책임감"],
+      "quote": "없는 것보다 빚지는 게 무서운 거야.",
+      "emoji": "💪",
+      "style": {
+        "gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        "number": "②",
+        "css_class": "type-2"
+      }
     }
+    // ... 나머지 6개 결과 유형
   },
   "analytics": {
-    "events": [
-      {
-        "name": "quiz_started",
-        "properties": ["quiz_id", "user_agent", "referrer"]
-      },
-      {
-        "name": "question_answered", 
-        "properties": ["quiz_id", "question_id", "choice_id", "time_spent"]
-      },
-      {
-        "name": "quiz_completed",
-        "properties": ["quiz_id", "result_type", "total_time", "completion_rate"]
-      },
-      {
-        "name": "result_shared",
-        "properties": ["quiz_id", "result_type", "share_platform"]
-      }
-    ],
-    "goals": [
-      {
-        "name": "completion_rate",
-        "target": 0.75,
-        "description": "75% 이상의 사용자가 테스트를 완료"
-      },
-      {
-        "name": "share_rate", 
-        "target": 0.30,
-        "description": "30% 이상의 사용자가 결과를 공유"
-      }
-    ]
+    "enabled": true,
+    "events": ["quiz_started", "question_answered", "quiz_completed", "result_shared"]
   }
 }
 ```
 
-### 2.3 디렉토리 구조 (v0.2.0)
+#### 2.3.2 주요 변경사항 (v2.0 → v2.1)
+1. **점수 시스템 단순화**: `weighted_sum` → `simple_count`
+2. **선택지 구조 단순화**: 복잡한 scores 객체 → 단일 result_type
+3. **결과 카드 스타일 정보 추가**: CSS 클래스, 그라데이션, 이모지 등
+4. **불필요한 필드 제거**: 복잡한 traits, recommendations 등 선택적으로 변경
+
+### 2.4 디렉토리 구조 (v0.2.0)
 ```
 nojam/
 ├── assets/
 │   ├── quizzes/              # Quiz JSON 파일들
-│   │   ├── mind-age-v1.json
-│   │   ├── personality-v2.json
-│   │   └── career-fit-v1.json
-│   ├── images/
-│   │   ├── cards/            # 결과 카드 이미지
-│   │   ├── backgrounds/      # 배경 이미지
-│   │   ├── icons/           # 아이콘
-│   │   └── og/              # OG 이미지
-│   └── schemas/
-│       └── quiz-v2.json     # JSON Schema 정의
+│   │   ├── mind-age-test.json
+│   │   └── schemas/
+│   │       └── quiz-v2.1.json # JSON Schema 정의
+│   └── templates/
+│       ├── card.html         # 결과 카드 템플릿
+│       └── quiz.html         # 퀴즈 진행 템플릿
 ├── nojam/
 │   ├── models/
 │   │   ├── quiz.py          # Quiz, Question, Result Pydantic 모델
@@ -221,8 +172,8 @@ nojam/
 │   ├── services/
 │   │   ├── quiz_engine.py   # 범용 퀴즈 엔진
 │   │   ├── quiz_loader.py   # JSON 로더 & 캐시
-│   │   ├── scoring.py       # 점수 계산 엔진
-│   │   └── analytics.py     # 분석 서비스
+│   │   ├── scoring.py       # 점수 계산 엔진 (simple_count 구현)
+│   │   └── card_renderer.py # HTML 카드 렌더링 서비스
 │   ├── admin/
 │   │   ├── routes.py        # 관리자 API
 │   │   ├── preview.py       # 미리보기 기능
@@ -239,21 +190,22 @@ nojam/
 
 #### 주요 작업
 - [ ] **Quiz Models 설계**
-  - Pydantic 모델로 JSON 스키마 정의
-  - 타입 안전성 및 검증 로직 구현
+  - Pydantic 모델로 단순화된 JSON 스키마 정의
+  - simple_count 점수 방식 지원
   
 - [ ] **Quiz Loader 구현**
   - 앱 시작 시 `/assets/quizzes/*.json` 파일 로드
   - 메모리 캐시 및 파일 변경 감지
-  - JSON Schema 검증
+  - JSON Schema v2.1 검증
   
-- [ ] **범용 Scoring Engine**
-  - weighted_sum, max_score, percentage 등 다양한 채점 방식
-  - 동점 처리 로직 (알파벳순, 최근 답변 우선 등)
+- [ ] **Simple Scoring Engine**
+  - simple_count 방식: 각 선택지가 특정 유형에 1점
+  - 최다 득점 유형 결정 (동점 시 알파벳순)
   
-- [ ] **Dynamic Template Rendering**
-  - Jinja2 템플릿에서 JSON 데이터 동적 렌더링
-  - 반응형 UI 컴포넌트 라이브러리
+- [ ] **Dynamic Card Rendering**
+  - 기존 card.html을 Jinja2 템플릿으로 변환
+  - JSON 데이터 기반 동적 카드 생성
+  - 유형별 CSS 클래스 및 스타일 적용
   
 - [ ] **기존 테스트 마이그레이션**
   - 현재 하드코딩된 "마음나이 테스트"를 JSON으로 변환
@@ -262,6 +214,7 @@ nojam/
 #### 성공 지표
 - [x] 기존 테스트가 JSON 기반으로 동작
 - [x] 새로운 JSON 파일 추가 시 자동으로 웹에 반영
+- [x] HTML 카드가 JSON 데이터로 동적 렌더링
 - [x] 모든 단위 테스트 통과
 
 ### 3.2 Phase 2: Admin Tools (v0.3.0) - 1주  
@@ -276,121 +229,79 @@ nojam/
   - 웹 기반 JSON 스키마 검증 도구
   - 오류 위치 및 수정 제안
   
+- [ ] **Card Image Export**
+  - Puppeteer 기반 HTML→이미지 변환
+  - 카카오톡 공유용 이미지 자동 생성
+  
 - [ ] **Analytics Dashboard**
   - 테스트별 완료율, 결과 분포, 공유율 차트
   - 실시간 사용자 현황
-  
-- [ ] **A/B Testing Framework**
-  - 동일 테스트의 여러 버전 동시 운영
-  - 트래픽 분할 및 성과 비교
 
 #### 성공 지표
 - [x] 비개발자도 JSON 파일 수정 가능
 - [x] 실시간 분석 데이터 확인
-- [x] A/B 테스트 설정 및 결과 분석
+- [x] 카드 이미지 자동 생성
 
 ### 3.3 Phase 3: Advanced Features (v0.4.0) - 2주
 **목표**: 고급 기능 및 최적화
 
 #### 주요 작업
-- [ ] **Multi-language Support**
-  - i18n 프레임워크 도입
-  - 언어별 JSON 파일 관리
+- [ ] **Advanced Scoring Methods**
+  - weighted_sum, percentage 등 다양한 점수 방식 지원
+  - 기존 simple_count와 호환성 유지
   
 - [ ] **Advanced Question Types**
   - 슬라이더형 질문 (1-10 점수)
   - 이미지 선택형 질문
   - 순위 매기기 질문
   
-- [ ] **Dynamic Result Generation**
-  - AI 기반 개인화된 결과 설명
-  - 사용자 답변 패턴 분석
+- [ ] **Multi-language Support**
+  - i18n 프레임워크 도입
+  - 언어별 JSON 파일 관리
   
 - [ ] **Performance Optimization**
   - Redis 캐시 도입
-  - CDN 연동 (이미지, 정적 파일)
+  - 카드 이미지 CDN 연동
   - DB 쿼리 최적화
-  
-- [ ] **Advanced Analytics**
-  - 사용자 여정 분석
-  - 이탈 지점 분석
-  - 코호트 분석
 
 #### 성공 지표
-- [x] 다국어 테스트 지원
+- [x] 다양한 점수 방식 지원
 - [x] 다양한 질문 형식 활용
 - [x] 페이지 로딩 시간 < 2초
 
 ## 4. 기술적 고려사항
 
-### 4.1 성능 최적화
-- **메모리 캐시**: Quiz JSON은 앱 시작 시 로드하여 메모리에 캐시
-- **이미지 최적화**: WebP 포맷 사용, 반응형 이미지 제공
-- **CDN 활용**: 정적 자원은 Cloudflare Images 활용
-- **DB 최적화**: 인덱스 설계, 쿼리 최적화
+### 4.1 카드 렌더링 최적화
+- **템플릿 캐싱**: Jinja2 템플릿 컴파일 결과 캐시
+- **이미지 생성 최적화**: Puppeteer 인스턴스 재사용, 병렬 처리
+- **CDN 활용**: 생성된 카드 이미지는 CDN에 캐시
 
 ### 4.2 확장성 설계
-- **수평 확장**: Stateless 앱 서버, 외부 캐시 사용
-- **마이크로서비스 준비**: 퀴즈 엔진과 분석 서비스 분리 가능한 구조
-- **API 버전 관리**: v1, v2 API 동시 지원
+- **점수 방식 확장**: simple_count 외 다양한 방식 플러그인 구조
+- **템플릿 확장**: 카드 외 다양한 결과 표시 방식 지원
+- **API 버전 관리**: v2.1, v2.2 등 스키마 버전 동시 지원
 
 ### 4.3 보안 고려사항
 - **JSON 검증**: 악의적인 JSON 파일 업로드 방지
-- **XSS 방지**: 사용자 입력 및 JSON 콘텐츠 sanitization
-- **Rate Limiting**: API 호출 제한
-- **CSRF 보호**: 폼 제출 시 CSRF 토큰 검증
+- **템플릿 보안**: Jinja2 autoescape 활성화
+- **이미지 생성 제한**: Puppeteer 리소스 사용량 제한
 
-## 5. 운영 및 모니터링
+## 5. 예상 효과 및 KPI
 
-### 5.1 배포 전략
-- **Blue-Green 배포**: 무중단 배포
-- **Feature Flag**: 새로운 기능의 점진적 롤아웃
-- **Rollback 계획**: 문제 발생 시 즉시 이전 버전으로 복구
-
-### 5.2 모니터링
-- **실시간 알림**: 오류율, 응답시간 임계값 초과 시 Slack 알림
-- **사용자 분석**: GA4 + 자체 분석 시스템
-- **성능 모니터링**: APM 도구 도입 (New Relic, DataDog)
-
-### 5.3 백업 및 복구
-- **데이터 백업**: 일일 자동 백업, 주간 백업 검증
-- **재해 복구**: RTO 4시간, RPO 1시간 목표
-- **버전 관리**: Quiz JSON 파일의 Git 기반 버전 관리
-
-## 6. 예상 효과 및 KPI
-
-### 6.1 개발 효율성
+### 5.1 개발 효율성
 - **테스트 제작 시간**: 2일 → 2시간 (90% 단축)
+- **카드 디자인 시간**: 1일 → 10분 (JSON 수정만으로 완료)
 - **배포 주기**: 주 1회 → 일 1회
-- **버그 발생률**: JSON 검증을 통한 50% 감소
 
-### 6.2 비즈니스 임팩트
+### 5.2 비즈니스 임팩트
 - **테스트 다양성**: 월 1개 → 월 5개 신규 테스트
-- **사용자 참여도**: 재방문율 30% 증가
+- **사용자 참여도**: 카드 공유율 30% 증가
 - **수익성**: 다양한 테스트를 통한 광고 수익 증대
-
-### 6.3 측정 지표
-- **기술 지표**: 응답시간, 에러율, 캐시 히트율
-- **사용자 지표**: 완료율, 공유율, 재방문율  
-- **비즈니스 지표**: 신규 테스트 제작 속도, 광고 수익
-
----
-
-## 7. 위험 요소 및 대응 방안
-
-### 7.1 기술적 위험
-- **JSON 스키마 변경**: 하위 호환성 유지, 마이그레이션 도구 제공
-- **성능 저하**: 부하 테스트, 성능 모니터링 강화
-- **보안 취약점**: 정기적인 보안 감사, 침투 테스트
-
-### 7.2 운영 위험  
-- **콘텐츠 품질**: JSON 검증 도구, 미리보기 시스템
-- **사용자 혼란**: 일관된 UI/UX, 사용자 테스트
-- **데이터 손실**: 백업 시스템, 복구 절차 문서화
 
 ---
 
 **문서 변경 이력**
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|-----------|
-| 2.0 | 2025-01-21 | o3-assistant | 내부 테스트 제작용 플랫폼 로드맵 고도화 | 
+| 2.0 | 2025-01-21 | o3-assistant | 내부 테스트 제작용 플랫폼 로드맵 고도화 |
+| 2.1 | 2025-01-21 | o3-assistant | 실제 샘플 테스트 분석 반영, 스키마 단순화, 카드 렌더링 방식 결정 | 

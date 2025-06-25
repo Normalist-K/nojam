@@ -1,0 +1,585 @@
+{
+  "$schema": "https://nojam.com/schemas/quiz-v2.1.json",
+  "meta": {
+    "id": "mind_age_test",
+    "title": "🕰️ 나는 어떤 시대형 인간일까?",
+    "description": "베이비붐 세대를 위한 심리테스트",
+    "version": "1.0.0",
+    "author": "nojam-team",
+    "created_at": "2025-01-21",
+    "estimated_time": "3-5분",
+    "target_age": "50-70"
+  },
+  "config": {
+    "question_count": 15,
+    "result_types": 8,
+    "scoring_method": "simple_count",
+    "randomize_questions": false,
+    "show_progress": true
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "text": "휴대폰이 고장 났을 때 나는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q1_a",
+          "text": "종이수첩 있으면 돼",
+          "result_type": "ANA"
+        },
+        {
+          "id": "q1_b",
+          "text": "얼른 새폰 찾아봐야지",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q1_c",
+          "text": "고치거나 잠시 안 써도 괜찮아",
+          "result_type": "7080"
+        },
+        {
+          "id": "q1_d",
+          "text": "폰 없으면 못 살아!!",
+          "result_type": "TREND"
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "가장 정이 가는 음악은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q2_a",
+          "text": "통기타 노래, 쎄시봉",
+          "result_type": "7080"
+        },
+        {
+          "id": "q2_b",
+          "text": "트로트 스타일 음악",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q2_c",
+          "text": "광고송, 드라마 OST",
+          "result_type": "JUNK"
+        },
+        {
+          "id": "q2_d",
+          "text": "최신 플레이리스트",
+          "result_type": "PHONE"
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "회식 자리에 가면 나는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q3_a",
+          "text": "빠르게 사라짐",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q3_b",
+          "text": "끝까지 남아 노래방 감",
+          "result_type": "7080"
+        },
+        {
+          "id": "q3_c",
+          "text": "사회 얘기, 정치 얘기 꺼냄",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q3_d",
+          "text": "옷부터 챙기고 포즈도 잡음",
+          "result_type": "TREND"
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "text": "일정을 기록할 때 나는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q4_a",
+          "text": "종이 수첩이 최고",
+          "result_type": "ANA"
+        },
+        {
+          "id": "q4_b",
+          "text": "달력에 붙여둔다",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q4_c",
+          "text": "휴대폰 메모앱 활용",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q4_d",
+          "text": "그냥 머릿속에 기억함",
+          "result_type": "IMF"
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "text": "유튜브에서 가장 자주 보는 콘텐츠는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q5_a",
+          "text": "뉴스, 시사 프로그램",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q5_b",
+          "text": "건강 정보, 약초 이야기",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q5_c",
+          "text": "트렌드 정보, 쇼핑/뷰티",
+          "result_type": "TREND"
+        },
+        {
+          "id": "q5_d",
+          "text": "옛날 CF, 복고 영상",
+          "result_type": "JUNK"
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "text": "자녀가 스마트폰 기능을 설명해줄 때 나는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q6_a",
+          "text": "내가 몰라서 안 쓰는 거야",
+          "result_type": "IMF"
+        },
+        {
+          "id": "q6_b",
+          "text": "이런 게 되는구나~",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q6_c",
+          "text": "그냥 수첩이 더 낫다",
+          "result_type": "ANA"
+        },
+        {
+          "id": "q6_d",
+          "text": "나도 너보다 빠를걸?",
+          "result_type": "TREND"
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "text": "가장 기억에 남는 시대 사건은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q7_a",
+          "text": "IMF 구제금융",
+          "result_type": "IMF"
+        },
+        {
+          "id": "q7_b",
+          "text": "80년대 민주화 운동",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q7_c",
+          "text": "흑백 TV에서 컬러로 바뀔 때",
+          "result_type": "7080"
+        },
+        {
+          "id": "q7_d",
+          "text": "'사랑과 전쟁' 드라마 열풍",
+          "result_type": "MBC"
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "text": "당신의 옷장 스타일은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q8_a",
+          "text": "옛날 코트, 정장 스타일",
+          "result_type": "7080"
+        },
+        {
+          "id": "q8_b",
+          "text": "실용적이고 튀지 않음",
+          "result_type": "IMF"
+        },
+        {
+          "id": "q8_c",
+          "text": "기능성, 홈쇼핑 인기템 위주",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q8_d",
+          "text": "골프웨어, 스트릿 감성도 섞임",
+          "result_type": "TREND"
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "text": "가장 선호하는 모임은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q9_a",
+          "text": "친구들과 차 마시며 담소",
+          "result_type": "7080"
+        },
+        {
+          "id": "q9_b",
+          "text": "지역 시민단체, 봉사활동",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q9_c",
+          "text": "가족 식사",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q9_d",
+          "text": "SNS로 모이는 댄스/취미모임",
+          "result_type": "PHONE"
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "text": "주말의 이상적인 하루는?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q10_a",
+          "text": "신문 보며 라디오 듣기",
+          "result_type": "ANA"
+        },
+        {
+          "id": "q10_b",
+          "text": "시장에서 장보고 집밥 만들기",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q10_c",
+          "text": "최신 핫플 다녀오기",
+          "result_type": "TREND"
+        },
+        {
+          "id": "q10_d",
+          "text": "옛날 VHS 테이프 돌려보기",
+          "result_type": "JUNK"
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "text": "아래 중 가장 공감되는 소비 습관은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q11_a",
+          "text": "싼 게 최고! 실속이 중요해",
+          "result_type": "IMF"
+        },
+        {
+          "id": "q11_b",
+          "text": "스타일도 포기 못 해!",
+          "result_type": "TREND"
+        },
+        {
+          "id": "q11_c",
+          "text": "한 번쯤은 추억에 돈 써야지",
+          "result_type": "JUNK"
+        },
+        {
+          "id": "q11_d",
+          "text": "가족을 위한 소비는 아깝지 않아",
+          "result_type": "MBC"
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "text": "친구가 \"너 요즘 늙었대\"라고 할 때 내 반응은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q12_a",
+          "text": "옛날이 더 좋았어…",
+          "result_type": "7080"
+        },
+        {
+          "id": "q12_b",
+          "text": "그래도 난 여전히 멋져!",
+          "result_type": "TREND"
+        },
+        {
+          "id": "q12_c",
+          "text": "늙은 게 아니라 경험이 쌓인 거지",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q12_d",
+          "text": "늙는 것도 돈이 있어야지…",
+          "result_type": "IMF"
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "text": "즐겨보는 TV 프로그램 스타일은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q13_a",
+          "text": "인간극장, 다큐멘터리",
+          "result_type": "MBC"
+        },
+        {
+          "id": "q13_b",
+          "text": "뉴스, 시사 토론",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q13_c",
+          "text": "홈쇼핑, 리빙 정보",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q13_d",
+          "text": "옛날 드라마 다시보기",
+          "result_type": "7080"
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "text": "SNS 활동은 어떤 편인가요?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q14_a",
+          "text": "눈팅 위주, 댓글은 안 달아",
+          "result_type": "IMF"
+        },
+        {
+          "id": "q14_b",
+          "text": "예쁜 거 보면 공유는 꼭!",
+          "result_type": "TREND"
+        },
+        {
+          "id": "q14_c",
+          "text": "단톡방 링크 공유 잘함",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q14_d",
+          "text": "SNS는 내 취향 아냐",
+          "result_type": "ANA"
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "text": "아래 중 가장 나다운 말은?",
+      "type": "single_choice",
+      "choices": [
+        {
+          "id": "q15_a",
+          "text": "그 시절 감성이 그립다",
+          "result_type": "7080"
+        },
+        {
+          "id": "q15_b",
+          "text": "요즘 정보는 다 폰에 있어",
+          "result_type": "PHONE"
+        },
+        {
+          "id": "q15_c",
+          "text": "정의는 살아있어야지",
+          "result_type": "ACT"
+        },
+        {
+          "id": "q15_d",
+          "text": "그 시절 CF는 진짜 예술이었어",
+          "result_type": "JUNK"
+        }
+      ]
+    }
+  ],
+  "results": {
+    "7080": {
+      "code": "7080",
+      "title": "7080 감성형",
+      "subtitle": "통기타, 쎄시봉, 낭만 감성",
+      "description": "통기타, 쎄시봉, 낭만 감성의 향수와 추억을 소중히 여기는 로맨틱한 당신",
+      "keywords": ["낭만", "음악", "회상"],
+      "quote": "그땐 말이야, 나이트보다 통기타였지.",
+      "emoji": "🎵",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+        "number": "①",
+        "css_class": "type-1"
+      },
+      "share": {
+        "title": "나는 7080 감성형!",
+        "description": "통기타와 낭만을 사랑하는 감성파",
+        "hashtags": ["#7080감성", "#통기타", "#낭만", "#마음나이테스트"]
+      }
+    },
+    "IMF": {
+      "code": "IMF",
+      "title": "IMF 생존형",
+      "subtitle": "위기 속 실용주의, 절약 우선",
+      "description": "위기 속 실용주의, 절약 우선 현실적이고 책임감 강한 든든한 당신",
+      "keywords": ["절약", "현실", "책임감"],
+      "quote": "없는 것보다 빚지는 게 무서운 거야.",
+      "emoji": "💪",
+      "style": {
+        "gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        "number": "②",
+        "css_class": "type-2"
+      },
+      "share": {
+        "title": "나는 IMF 생존형!",
+        "description": "현실적이고 책임감 강한 든든한 사람",
+        "hashtags": ["#IMF생존형", "#절약", "#현실", "#마음나이테스트"]
+      }
+    },
+    "ACT": {
+      "code": "ACT",
+      "title": "운동권 열혈형",
+      "subtitle": "80년대 민주화, 정의감 충만",
+      "description": "80년대 민주화, 정의감 충만 사회 의식이 뚜렷하고 열정적인 당신",
+      "keywords": ["정치의식", "정의", "공동체"],
+      "quote": "너는 아직도 사회 구조를 몰라.",
+      "emoji": "🔥",
+      "style": {
+        "gradient": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
+        "number": "③",
+        "css_class": "type-3"
+      },
+      "share": {
+        "title": "나는 운동권 열혈형!",
+        "description": "사회 의식이 뚜렷하고 열정적인 사람",
+        "hashtags": ["#운동권열혈형", "#정의", "#사회의식", "#마음나이테스트"]
+      }
+    },
+    "MBC": {
+      "code": "MBC",
+      "title": "MBC드라마형",
+      "subtitle": "가족 중심, 눈물 나는 인생극",
+      "description": "가족 중심, 눈물 나는 인생극 정 많고 가족애가 깊은 따뜻한 당신",
+      "keywords": ["드라마", "가족애", "감성"],
+      "quote": "가족이 최고지. 무조건 가족.",
+      "emoji": "❤️",
+      "style": {
+        "gradient": "linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)",
+        "number": "④",
+        "css_class": "type-4"
+      },
+      "share": {
+        "title": "나는 MBC드라마형!",
+        "description": "정 많고 가족애가 깊은 따뜻한 사람",
+        "hashtags": ["#MBC드라마형", "#가족애", "#감성", "#마음나이테스트"]
+      }
+    },
+    "PHONE": {
+      "code": "PHONE",
+      "title": "폰 적응형",
+      "subtitle": "스마트폰에 적응한 늦깎이",
+      "description": "스마트폰에 적응한 늦깎이 새로운 기술을 받아들이는 적응력 좋은 당신",
+      "keywords": ["유튜브", "카톡", "적응"],
+      "quote": "나도 밴드 보고, 유튜브도 알아.",
+      "emoji": "📱",
+      "style": {
+        "gradient": "linear-gradient(135deg, #fd79a8 0%, #e84393 100%)",
+        "number": "⑤",
+        "css_class": "type-5"
+      },
+      "share": {
+        "title": "나는 폰 적응형!",
+        "description": "새로운 기술을 받아들이는 적응력 좋은 사람",
+        "hashtags": ["#폰적응형", "#스마트폰", "#적응력", "#마음나이테스트"]
+      }
+    },
+    "ANA": {
+      "code": "ANA",
+      "title": "아날로그 고수형",
+      "subtitle": "수첩과 달력을 고수하는 전통파",
+      "description": "수첩과 달력을 고수하는 전통파 원칙과 규칙을 중시하는 신뢰할 수 있는 당신",
+      "keywords": ["필기", "신문", "규칙성"],
+      "quote": "스케줄은 다 수첩에 있어.",
+      "emoji": "📝",
+      "style": {
+        "gradient": "linear-gradient(135deg, #00b894 0%, #00a085 100%)",
+        "number": "⑥",
+        "css_class": "type-6"
+      },
+      "share": {
+        "title": "나는 아날로그 고수형!",
+        "description": "원칙과 규칙을 중시하는 신뢰할 수 있는 사람",
+        "hashtags": ["#아날로그고수형", "#수첩", "#전통", "#마음나이테스트"]
+      }
+    },
+    "TREND": {
+      "code": "TREND",
+      "title": "유행 선도형",
+      "subtitle": "트렌디한 감각파 중장년",
+      "description": "트렌디한 감각파 중장년 스타일과 트렌드에 민감한 세련된 당신",
+      "keywords": ["골프웨어", "스타일", "외향"],
+      "quote": "요즘은 골프웨어가 힙이야~",
+      "emoji": "✨",
+      "style": {
+        "gradient": "linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)",
+        "number": "⑦",
+        "css_class": "type-7"
+      },
+      "share": {
+        "title": "나는 유행 선도형!",
+        "description": "스타일과 트렌드에 민감한 세련된 사람",
+        "hashtags": ["#유행선도형", "#트렌드", "#스타일", "#마음나이테스트"]
+      }
+    },
+    "JUNK": {
+      "code": "JUNK",
+      "title": "정크컬쳐 수집형",
+      "subtitle": "옛날 CF와 복고를 사랑함",
+      "description": "옛날 CF와 복고를 사랑함 추억의 문화를 수집하는 레트로한 당신",
+      "keywords": ["향수", "B급 감성", "레트로"],
+      "quote": "그 라면 CF 기억나? '언제나~ 너를~'",
+      "emoji": "📺",
+      "style": {
+        "gradient": "linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)",
+        "number": "⑧",
+        "css_class": "type-8"
+      },
+      "share": {
+        "title": "나는 정크컬쳐 수집형!",
+        "description": "추억의 문화를 수집하는 레트로한 사람",
+        "hashtags": ["#정크컬쳐수집형", "#레트로", "#복고", "#마음나이테스트"]
+      }
+    }
+  },
+  "analytics": {
+    "enabled": true,
+    "events": ["quiz_started", "question_answered", "quiz_completed", "result_shared"]
+  }
+} 

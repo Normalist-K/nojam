@@ -370,7 +370,8 @@
       "emoji": "🗂️",
       "style": {
         "gradient": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)",
-        "css_class": "estj"
+        "number": "①",
+        "css_class": "type-1"
       }
     },
     "ESFJ": {
@@ -383,7 +384,8 @@
       "emoji": "🧑‍🤝‍🧑",
       "style": {
         "gradient": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
-        "css_class": "esfj"
+        "number": "②",
+        "css_class": "type-2"
       }
     },
     "ISTJ": {
@@ -396,7 +398,8 @@
       "emoji": "📘",
       "style": {
         "gradient": "linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)",
-        "css_class": "istj"
+        "number": "③",
+        "css_class": "type-3"
       }
     },
     "ISFJ": {
@@ -409,7 +412,8 @@
       "emoji": "🌷",
       "style": {
         "gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-        "css_class": "isfj"
+        "number": "④",
+        "css_class": "type-4"
       }
     },
     "ESTP": {
@@ -422,7 +426,8 @@
       "emoji": "🎯",
       "style": {
         "gradient": "linear-gradient(135deg, #fd79a8 0%, #e84393 100%)",
-        "css_class": "estp"
+        "number": "⑤",
+        "css_class": "type-5"
       }
     },
     "ESFP": {
@@ -435,7 +440,8 @@
       "emoji": "🎉",
       "style": {
         "gradient": "linear-gradient(135deg, #fdcb6e 0%, #e17055 100%)",
-        "css_class": "esfp"
+        "number": "⑥",
+        "css_class": "type-6"
       }
     },
     "ISTP": {
@@ -448,7 +454,8 @@
       "emoji": "🔧",
       "style": {
         "gradient": "linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%)",
-        "css_class": "istp"
+        "number": "⑦",
+        "css_class": "type-7"
       }
     },
     "ISFP": {
@@ -461,7 +468,8 @@
       "emoji": "🎨",
       "style": {
         "gradient": "linear-gradient(135deg, #00b894 0%, #00a085 100%)",
-        "css_class": "isfp"
+        "number": "⑧",
+        "css_class": "type-8"
       }
     },
     "ENTJ": {
@@ -474,7 +482,8 @@
       "emoji": "🧠",
       "style": {
         "gradient": "linear-gradient(135deg, #2d3436 0%, #636e72 100%)",
-        "css_class": "entj"
+        "number": "⑨",
+        "css_class": "type-9"
       }
     },
     "ENTP": {
@@ -487,7 +496,8 @@
       "emoji": "💡",
       "style": {
         "gradient": "linear-gradient(135deg, #00cec9 0%, #55a3ff 100%)",
-        "css_class": "entp"
+        "number": "⑩",
+        "css_class": "type-10"
       }
     },
     "INTJ": {
@@ -500,7 +510,8 @@
       "emoji": "🧩",
       "style": {
         "gradient": "linear-gradient(135deg, #341f97 0%, #5f27cd 100%)",
-        "css_class": "intj"
+        "number": "①",
+        "css_class": "type-11"
       }
     },
     "INTP": {
@@ -513,7 +524,8 @@
       "emoji": "🧪",
       "style": {
         "gradient": "linear-gradient(135deg, #ff7675 0%, #d63031 100%)",
-        "css_class": "intp"
+        "number": "②",
+        "css_class": "type-12"
       }
     },
     "ENFJ": {
@@ -526,7 +538,8 @@
       "emoji": "🌟",
       "style": {
         "gradient": "linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%)",
-        "css_class": "enfj"
+        "number": "③",
+        "css_class": "type-13"
       }
     },
     "ENFP": {
@@ -539,7 +552,8 @@
       "emoji": "✨",
       "style": {
         "gradient": "linear-gradient(135deg, #00b894 0%, #55a3ff 100%)",
-        "css_class": "enfp"
+        "number": "④",
+        "css_class": "type-14"
       }
     },
     "INFJ": {
@@ -552,7 +566,8 @@
       "emoji": "🔮",
       "style": {
         "gradient": "linear-gradient(135deg, #6c5ce7 0%, #74b9ff 100%)",
-        "css_class": "infj"
+        "number": "⑤",
+        "css_class": "type-15"
       }
     },
     "INFP": {
@@ -565,7 +580,8 @@
       "emoji": "💌",
       "style": {
         "gradient": "linear-gradient(135deg, #fd79a8 0%, #a8edea 100%)",
-        "css_class": "infp"
+        "number": "⑥",
+        "css_class": "type-16"
       }
     }
   },

@@ -30,6 +30,10 @@ references 폴더에 있는 sample_test{X}를 웹서비스에 반영해줘.
 - 문항은 각 선택지가 특정 결과 유형에 1점씩 배정 (simple_count 방식)
 - 결과 유형은 test{X}.md의 "결과유형" 섹션에서 추출
 - 각 결과에는 title, subtitle, description, keywords, quote, emoji, style 포함
+- **⚠️ 중요**: style 객체는 반드시 다음 필드들을 포함해야 함:
+  - gradient: CSS 그라데이션 (linear-gradient로 시작)
+  - number: 원형 숫자 (①②③④⑤⑥⑦⑧⑨⑩ 중 하나)
+  - css_class: "type-1", "type-2", ... "type-16" 형식 (type-숫자)
 
 **참고 파일:**
 - 스키마: assets/schemas/quiz-schema-v2.1.json
@@ -168,22 +172,62 @@ assets/
 
 ## 자주 발생하는 문제 및 해결
 
-### 1. JSON 스키마 오류
+### 🚨 가장 흔한 Pydantic 검증 오류들
+
+#### 1. style.number 필드 누락
+```json
+// ❌ 잘못된 예시
+"style": {
+  "gradient": "linear-gradient(...)",
+  "css_class": "type-1"
+}
+
+// ✅ 올바른 예시  
+"style": {
+  "gradient": "linear-gradient(...)",
+  "number": "①",
+  "css_class": "type-1"
+}
+```
+
+#### 2. css_class 패턴 오류
+```json
+// ❌ 잘못된 예시
+"css_class": "estj"
+"css_class": "mbti-type"
+
+// ✅ 올바른 예시
+"css_class": "type-1"
+"css_class": "type-16"
+```
+
+#### 3. gradient 형식 오류
+```json
+// ❌ 잘못된 예시
+"gradient": "background: linear-gradient(...)"
+
+// ✅ 올바른 예시
+"gradient": "linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)"
+```
+
+### 기타 문제들
+
+#### 4. JSON 스키마 오류
 ```bash
 # 검증 방법
 cat assets/quizzes/새파일.json | jq '.' > /dev/null
 ```
 
-### 2. 문항 수 불일치
+#### 5. 문항 수 불일치
 - `config.question_count`와 실제 `questions` 배열 길이 확인
 - 누락된 문항이나 중복 ID 점검
 
-### 3. 결과 유형 참조 오류
+#### 6. 결과 유형 참조 오류
 - 모든 `result_type`이 `results` 객체에 정의되었는지 확인
 - 대소문자 정확성 점검
 
-### 4. 스타일 정보 누락
-- 각 결과에 `style.gradient`와 `style.css_class` 필수
+#### 7. 스타일 정보 누락
+- 각 결과에 `style.gradient`, `style.number`, `style.css_class` 모두 필수
 - card.html의 CSS 클래스명과 일치 확인
 
 ## 성공 체크리스트

@@ -17,6 +17,7 @@ class ScoringMethod(str, Enum):
     SIMPLE_COUNT = "simple_count"
     WEIGHTED_SUM = "weighted_sum"
     PERCENTAGE = "percentage"
+    MBTI_DIMENSIONS = "mbti_dimensions"
 
 
 class QuestionType(str, Enum):
@@ -135,9 +136,7 @@ class Quiz(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    schema_: str | None = Field(
-        None, alias="$schema", description="JSON Schema 참조"
-    )
+    schema_: str | None = Field(None, alias="$schema", description="JSON Schema 참조")
     meta: QuizMeta = Field(..., description="테스트 메타데이터")
     config: QuizConfig = Field(..., description="테스트 설정")
     questions: list[Question] = Field(..., min_length=1, description="문항 목록")
@@ -172,7 +171,7 @@ class Quiz(BaseModel):
     @classmethod
     def validate_result_codes(cls, v, info):
         """모든 선택지의 result_type이 results에 정의되어 있는지 검증."""
-        if "questions" in info.data:
+        if "questions" in info.data and "config" in info.data:
             defined_types = set(v.keys())
             used_types = set()
 
@@ -180,7 +179,16 @@ class Quiz(BaseModel):
                 for choice in question.choices:
                     used_types.add(choice.result_type)
 
-            undefined_types = used_types - defined_types
+            # MBTI 차원 방식의 경우 개별 차원(E,I,S,N,T,F,J,P) 허용
+            scoring_method = info.data["config"].scoring_method
+            if scoring_method == ScoringMethod.MBTI_DIMENSIONS:
+                mbti_dimensions = {"E", "I", "S", "N", "T", "F", "J", "P"}
+                # 사용된 타입이 MBTI 차원이거나 정의된 결과 타입이어야 함
+                valid_types = defined_types | mbti_dimensions
+                undefined_types = used_types - valid_types
+            else:
+                undefined_types = used_types - defined_types
+
             if undefined_types:
                 raise ValueError(f"정의되지 않은 결과 유형: {undefined_types}")
 

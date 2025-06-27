@@ -13,7 +13,7 @@
   "config": {
     "question_count": 20,
     "result_types": 16,
-    "scoring_method": "simple_count",
+    "scoring_method": "mbti_dimensions",
     "randomize_questions": false,
     "show_progress": true
   },

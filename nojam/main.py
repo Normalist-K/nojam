@@ -1,10 +1,18 @@
+from pathlib import Path
+
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from nojam.settings import configure_logging
 
 configure_logging()
 
 app = FastAPI(title="Nojam Psych Test API", version="0.1.0")
+
+# Static 파일 서빙 설정
+STATIC_DIR = Path(__file__).parent / "web" / "static"
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 from nojam.web.routes import router as web_router  # noqa: E402
 

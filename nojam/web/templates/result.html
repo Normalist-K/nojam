@@ -4,6 +4,29 @@
 {% if result_details %}{{ result_details.title }} - 심리테스트 결과{% else %}심리테스트 결과{% endif %}
 {% endblock %}
 
+{% block head %}
+<!-- 소셜 미디어 공유 최적화 OG 태그 -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="{{ request.url }}" />
+{% if result_details %}
+<meta property="og:title" content="🎯 {{ result_details.title }}" />
+<meta property="og:description" content="{{ result_details.subtitle }} | {{ result_details.description[:100] }}..." />
+<meta property="og:image" content="{{ request.url_root }}static/images/share/{{ result_type }}.jpg" />
+{% else %}
+<meta property="og:title" content="심리테스트 결과 - {{ result_type }}" />
+<meta property="og:description" content="나의 심리테스트 결과를 확인해보세요!" />
+<meta property="og:image" content="{{ request.url_root }}static/images/share/default.jpg" />
+{% endif %}
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="{% if result_details %}{{ result_details.title }}{% else %}{{ result_type }}{% endif %}" />
+<meta name="twitter:description" content="{% if result_details %}{{ result_details.subtitle }}{% else %}나의 심리테스트 결과{% endif %}" />
+
+<!-- 카카오톡 공유 JavaScript -->
+<script src="/static/js/kakao-share.js"></script>
+{% endblock %}
+
 {% block content %}
   <div class="max-w-2xl mx-auto">
     {% if result_details %}
@@ -93,9 +116,16 @@
       </div>
       {% endif %}
       
-      <button id="share-btn" class="bg-yellow-400 hover:bg-yellow-500 px-6 py-3 rounded-lg font-semibold transition-colors">
-        카카오톡 공유
-      </button>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button id="kakao-share-btn" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center">
+          <span class="mr-2">💬</span>
+          카카오톡 공유
+        </button>
+        <button id="band-share-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center">
+          <span class="mr-2">📢</span>
+          네이버 밴드 공유
+        </button>
+      </div>
     </div>
 
     <!-- 다시 테스트하기 -->
@@ -128,29 +158,53 @@
   </div>
 
   <script>
-    document.getElementById('share-btn').addEventListener('click', function() {
-      {% if result_details and result_details.share %}
-      const shareTitle = "{{ result_details.share.title or result_details.title }}";
-      const shareDesc = "{{ result_details.share.description or result_details.subtitle }}";
+    // 결과 데이터를 JavaScript 전역 변수로 설정
+    window.quizResultData = {
+      quizId: '{{ quiz.meta.id if quiz else "mind-age-test" }}',
+      resultType: '{{ result_type }}',
+      {% if result_details %}
+      title: '{{ result_details.title }}',
+      subtitle: '{{ result_details.subtitle }}',
+      description: '{{ result_details.description }}',
+      keywords: {{ result_details.keywords | tojson }},
+      quote: '{{ result_details.quote }}',
+      emoji: '{{ result_details.emoji }}',
+      imageUrl: '{{ request.url_root }}static/images/share/{{ result_type }}.jpg',
       {% else %}
-      const shareTitle = "심리테스트 결과";
-      const shareDesc = "나의 결과: {{ result_type }}";
+      title: '심리테스트 결과',
+      subtitle: '나의 결과: {{ result_type }}',
+      description: '심리테스트를 통해 알아본 나의 성향입니다.',
+      keywords: ['심리테스트', '성향분석'],
+      quote: '나만의 특별한 결과!',
+      emoji: '🎯',
+      imageUrl: '{{ request.url_root }}static/images/share/default.jpg',
       {% endif %}
+    };
+
+    // 네이버 밴드 공유 함수
+    function shareToBand() {
+      const resultData = window.quizResultData;
+      const shareUrl = window.location.href + '?utm_source=band';
+      const shareText = `${resultData.title}\n${resultData.subtitle}\n\n${shareUrl}`;
       
-      fetch('/stub/kakao/share', {
+      const bandUrl = `https://band.us/plugin/share?body=${encodeURIComponent(shareText)}&route=${encodeURIComponent(shareUrl)}`;
+      window.open(bandUrl, '_blank', 'width=600,height=400');
+      
+      // 밴드 공유 이벤트 로깅
+      fetch('/api/log-share-event', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          title: shareTitle,
-          description: shareDesc,
-          url: window.location.href
+          event_type: 'share_click',
+          platform: 'band',
+          quiz_id: resultData.quizId,
+          result_type: resultData.resultType,
+          timestamp: new Date().toISOString()
         })
-      }).then(function() {
-        alert('공유 완료 (stub)!');
-      }).catch(function(error) {
-        console.error('공유 실패:', error);
-        alert('공유에 실패했습니다.');
-      });
-    });
+      }).catch(error => console.error('Failed to log band share event:', error));
+    }
+
+    // 밴드 공유 버튼 이벤트 리스너
+    document.getElementById('band-share-btn').addEventListener('click', shareToBand);
   </script>
 {% endblock %}

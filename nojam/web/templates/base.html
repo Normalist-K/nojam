@@ -7,9 +7,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   
   <!-- Kakao JavaScript SDK -->
-  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
-          integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVBaj0Fe1LWJwfOi9GdHXqT2RgmN7FUWIo"
-          crossorigin="anonymous"></script>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+  
+  <!-- 페이지별 추가 헤더 -->
+  {% block head %}{% endblock %}
 </head>
 <body class="min-h-screen bg-gray-50 flex flex-col">
   <header class="bg-blue-600 text-white py-3 font-semibold text-center">
@@ -25,17 +26,50 @@
   <!-- Kakao SDK 초기화 -->
   <script>
     // Kakao SDK 초기화
-    if (typeof Kakao !== 'undefined' && Kakao.isInitialized() === false) {
-      // 실제 프로덕션에서는 settings.py의 get_kakao_javascript_key()에서 가져온 키를 사용
-      // 현재는 개발용 플레이스홀더
-      const kakaoKey = '{{ kakao_javascript_key|default:"your-kakao-key-here" }}';
-      if (kakaoKey && kakaoKey !== 'your-kakao-key-here') {
-        Kakao.init(kakaoKey);
-        console.log('Kakao SDK initialized:', Kakao.isInitialized());
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, checking Kakao SDK...');
+      console.log('Kakao object exists:', typeof Kakao !== 'undefined');
+      console.log('Current URL:', window.location.href);
+      
+      if (typeof Kakao !== 'undefined') {
+        const kakaoKey = '{{ kakao_javascript_key|default("your-kakao-key-here") }}';
+        console.log('Kakao Key (첫 20자):', kakaoKey.substring(0, 20) + '...');
+        console.log('Kakao Key length:', kakaoKey.length);
+        
+        if (kakaoKey && kakaoKey !== 'your-kakao-key-here' && kakaoKey.length > 10) {
+          try {
+            // 이미 초기화된 경우 재초기화
+            if (Kakao.isInitialized()) {
+              console.log('Kakao already initialized, cleaning up...');
+              Kakao.cleanup();
+            }
+            
+            console.log('Initializing Kakao SDK...');
+            Kakao.init(kakaoKey);
+            console.log('Kakao SDK initialized successfully:', Kakao.isInitialized());
+            
+            // 초기화 후 잠시 대기
+            setTimeout(() => {
+              console.log('Final Kakao initialization check:', Kakao.isInitialized());
+            }, 100);
+            
+          } catch (error) {
+            console.error('Kakao SDK initialization failed:', error);
+            console.error('Error details:', error.message);
+          }
+        } else {
+          console.warn('Kakao JavaScript Key not configured or invalid');
+          console.warn('Key details:', {
+            exists: !!kakaoKey,
+            notDefault: kakaoKey !== 'your-kakao-key-here',
+            length: kakaoKey ? kakaoKey.length : 0
+          });
+        }
       } else {
-        console.warn('Kakao JavaScript Key not configured');
+        console.error('Kakao SDK is not loaded');
+        console.error('Check if kakao.min.js is properly loaded');
       }
-    }
+    });
   </script>
 </body>
 </html> 

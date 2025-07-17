@@ -19,7 +19,7 @@ from fastapi.templating import Jinja2Templates
 from nojam.db.repository import AnswerRepository
 from nojam.services.loader import get_quiz_loader
 from nojam.services.quiz import calculate_result_type, get_score_breakdown
-from nojam.settings import get_kakao_javascript_key
+from nojam.settings import get_kakao_javascript_key, log_share_event
 
 logger = logging.getLogger(__name__)
 
@@ -299,3 +299,50 @@ async def get_quiz_info(quiz_id: str):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"퀴즈 로드 실패: {e}")
+
+
+@router.post("/api/log-share-event")
+async def log_share_event_api(request: Request):
+    """공유 이벤트 로깅 API."""
+    try:
+        data = await request.json()
+        
+        # 필수 필드 검증
+        event_type = data.get("event_type")
+        platform = data.get("platform")
+        quiz_id = data.get("quiz_id")
+        result_type = data.get("result_type")
+        
+        if not all([event_type, platform]):
+            raise HTTPException(status_code=400, detail="event_type과 platform은 필수입니다.")
+        
+        # 추가 정보 수집
+        extra_data = {
+            "user_agent": data.get("user_agent", request.headers.get("user-agent", "")),
+            "referrer": data.get("referrer", request.headers.get("referer", "")),
+            "timestamp": data.get("timestamp"),
+            "ip_hash": hashlib.sha256(
+                (request.client.host + request.headers.get("user-agent", "")).encode()
+            ).hexdigest()[:16],
+        }
+        
+        # 에러 정보가 있다면 추가
+        if "error" in data:
+            extra_data["error"] = data["error"]
+        
+        # 로깅 실행
+        log_share_event(
+            event_type=event_type,
+            platform=platform,
+            quiz_id=quiz_id,
+            result_type=result_type,
+            extra=extra_data
+        )
+        
+        logger.info(f"공유 이벤트 로깅 성공: {event_type} on {platform}")
+        
+        return {"status": "success", "message": "이벤트가 성공적으로 로깅되었습니다."}
+        
+    except Exception as e:
+        logger.error(f"공유 이벤트 로깅 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"이벤트 로깅 실패: {e}")

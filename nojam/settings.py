@@ -5,9 +5,14 @@ from __future__ import annotations
 import logging
 import os
 import sys
+from pathlib import Path
 from typing import Any
 
 import structlog
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv(Path(__file__).parent.parent / ".env")
 
 
 def configure_logging() -> None:
@@ -62,3 +67,19 @@ def log_ad_metric(
     if extra:
         data.update(extra)
     structlog.get_logger("ad").info("ad_metric", **data)
+
+
+def log_share_event(
+    event_type: str, platform: str, quiz_id: str | None = None, 
+    result_type: str | None = None, extra: dict[str, Any] | None = None
+) -> None:
+    """공유 이벤트 로깅."""
+    data = {
+        "event_type": event_type,  # share_click, share_success, share_fail
+        "platform": platform,     # kakao, band, etc.
+        "quiz_id": quiz_id,
+        "result_type": result_type,
+    }
+    if extra:
+        data.update(extra)
+    structlog.get_logger("share").info("share_event", **data)

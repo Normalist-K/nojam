@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from typing import Any
 
@@ -24,6 +25,23 @@ def configure_logging() -> None:
         wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
         logger_factory=structlog.PrintLoggerFactory(file=sys.stdout),
     )
+
+
+# ------------------------------------------------------------
+# 환경변수 설정
+# ------------------------------------------------------------
+
+# Kakao SDK 설정
+KAKAO_JAVASCRIPT_KEY = os.getenv("KAKAO_JAVASCRIPT_KEY", "")
+KAKAO_JAVASCRIPT_KEY_DEV = "your-dev-key-here"  # 개발용 테스트 키
+
+
+def get_kakao_javascript_key() -> str:
+    """환경에 따른 Kakao JavaScript Key 반환."""
+    if KAKAO_JAVASCRIPT_KEY:
+        return KAKAO_JAVASCRIPT_KEY
+    # 개발 환경에서는 개발용 키 사용 (실제로는 실제 키를 설정해야 함)
+    return KAKAO_JAVASCRIPT_KEY_DEV
 
 
 # ------------------------------------------------------------

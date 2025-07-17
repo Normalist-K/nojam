@@ -27,7 +27,9 @@ references 폴더에 있는 sample_test{X}를 웹서비스에 반영해줘.
 
 **JSON 변환 규칙:**
 - meta.id: 영문 소문자 + 언더스코어 (예: mbti_5060_test)
-- 문항은 각 선택지가 특정 결과 유형에 1점씩 배정 (simple_count 방식)
+- **점수 계산 방식 선택**:
+  - 일반 테스트: simple_count (각 선택지가 특정 결과 유형에 1점)
+  - **MBTI 테스트**: mbti_dimensions (4개 차원 독립 계산 후 조합)
 - 결과 유형은 test{X}.md의 "결과유형" 섹션에서 추출
 - 각 결과에는 title, subtitle, description, keywords, quote, emoji, style 포함
 - **⚠️ 중요**: style 객체는 반드시 다음 필드들을 포함해야 함:
@@ -37,9 +39,33 @@ references 폴더에 있는 sample_test{X}를 웹서비스에 반영해줘.
 
 **참고 파일:**
 - 스키마: assets/schemas/quiz-schema-v2.1.json
-- 기존 예시: assets/quizzes/mind-age-test.json, assets/quizzes/conversation-style-test.json
+- Simple Count 예시: assets/quizzes/mind-age-test.json, assets/quizzes/conversation-style-test.json
+- **MBTI Dimensions 예시**: assets/quizzes/mbti-5060-test.json
 
 완료 후 "✅ {테스트명} 웹서비스 반영 완료"라고 알려줘.
+```
+
+### 🧠 MBTI 테스트 전용 프롬프트 🆕
+
+```
+references 폴더에 있는 sample_test{X} MBTI 테스트를 웹서비스에 반영해줘.
+
+**MBTI 테스트 특별 규칙:**
+1. scoring_method: "mbti_dimensions" 사용
+2. 질문 구조:
+   - q1~q5: E/I 차원 (result_type: "E" 또는 "I")
+   - q6~q10: S/N 차원 (result_type: "S" 또는 "N") 
+   - q11~q15: T/F 차원 (result_type: "T" 또는 "F")
+   - q16~q20: J/P 차원 (result_type: "J" 또는 "P")
+3. results: 16개 MBTI 유형 모두 정의 (ESTJ, ESFJ, ISTJ, ISFJ, ESTP, ESFP, ISTP, ISFP, ENTJ, ENFJ, INTJ, INFJ, ENTP, ENFP, INTP, INFP)
+4. 각 결과의 style.css_class는 "type-1"부터 "type-16"까지 순서대로
+
+**시스템이 자동으로 처리하는 부분:**
+- 4개 차원별 독립 점수 계산
+- 최종 MBTI 조합 생성 (예: E>I, S>N, T>F, J>P → ESTJ)
+- Pydantic 검증에서 개별 차원(E,I,S,N,T,F,J,P) 허용
+
+완료 후 "✅ MBTI {테스트명} 웹서비스 반영 완료 (mbti_dimensions 방식)" 라고 알려줘.
 ```
 
 ### 🔧 단계별 상세 프롬프트
@@ -56,7 +82,9 @@ references/sample_test{X} 폴더의 구조를 확인하고:
 ```
 test{X}.md 내용을 기반으로 assets/quizzes/{테스트명}.json 생성:
 - assets/schemas/quiz-schema-v2.1.json 스키마 준수
-- simple_count 점수 방식 사용
+- 점수 방식 선택:
+  * 일반 테스트: simple_count
+  * MBTI 테스트: mbti_dimensions (result_type을 E,I,S,N,T,F,J,P로 설정)
 - 모든 필드 완전히 채우기 (meta, config, questions, results)
 ```
 
@@ -112,7 +140,7 @@ assets/
   "config": {
     "question_count": 문항수,
     "result_types": 결과유형수,
-    "scoring_method": "simple_count",
+    "scoring_method": "simple_count", // 또는 "mbti_dimensions"
     "randomize_questions": false,
     "show_progress": true
   },
@@ -160,19 +188,62 @@ assets/
 
 ## 점수 계산 방식
 
-### Simple Count (기본)
+### 1. Simple Count (기본)
 - 각 선택지는 하나의 결과 유형에만 1점 부여
 - 최다 득점 유형이 최종 결과
 - 동점 시 알파벳 순서로 결정
+- **사용 예시**: 마인드 나이 테스트, 대화 스타일 테스트
+
+### 2. MBTI Dimensions (MBTI 전용) 🆕
+- 4개 독립 차원(E/I, S/N, T/F, J/P)에서 각각 점수 계산
+- 각 차원에서 우세한 쪽을 선택하여 최종 MBTI 조합 생성
+- **result_type**: 개별 차원("E", "I", "S", "N", "T", "F", "J", "P") 사용
+- **results**: 16개 MBTI 유형(ESTJ, INFP 등) 모두 정의
+- **예시**: 5060 MBTI 테스트
+
+#### MBTI 테스트 구조 예시
+```json
+{
+  "config": {
+    "scoring_method": "mbti_dimensions"
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "text": "외향성 관련 질문",
+      "choices": [
+        {"id": "q1_a", "text": "외향적 선택", "result_type": "E"},
+        {"id": "q1_b", "text": "내향적 선택", "result_type": "I"}
+      ]
+    }
+  ],
+  "results": {
+    "ESTJ": {...},
+    "INFP": {...}
+    // 16개 MBTI 유형 모두 정의
+  }
+}
+```
 
 ### 결과 유형 매핑 전략
-1. **이분법 테스트**: E/I, S/N, T/F, J/P → MBTI 조합
-2. **다중 유형**: 직접 매핑 (7080, IMF, ACT 등)
+1. **Simple Count 테스트**: 직접 매핑 (7080, IMF, ACT 등)
+2. **MBTI 테스트**: 4개 차원 → 16개 조합
 3. **복합 테스트**: 주요 차원별 분류 후 조합
 
 ## 자주 발생하는 문제 및 해결
 
 ### 🚨 가장 흔한 Pydantic 검증 오류들
+
+#### 0. MBTI 테스트에서 정의되지 않은 결과 유형 오류 🆕
+```bash
+# ❌ 오류 메시지
+정의되지 않은 결과 유형: {'E', 'I', 'S', 'N', 'T', 'F', 'J', 'P'}
+
+# ✅ 해결방법
+- scoring_method를 "mbti_dimensions"로 설정
+- 시스템이 자동으로 개별 MBTI 차원을 허용함
+- results에는 16개 MBTI 조합(ESTJ, INFP 등)만 정의하면 됨
+```
 
 #### 1. style.number 필드 누락
 ```json
@@ -290,5 +361,5 @@ cat assets/quizzes/새파일.json | jq '.' > /dev/null
 ---
 
 **📝 마지막 업데이트**: 2025-01-21  
-**📋 버전**: v1.0  
+**📋 버전**: v1.1 (MBTI 차원별 점수 계산 시스템 추가)  
 **✍️ 작성자**: nojam-team 

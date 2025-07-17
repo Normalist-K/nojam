@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}심리테스트{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Kakao JavaScript SDK -->
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+          integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVBaj0Fe1LWJwfOi9GdHXqT2RgmN7FUWIo"
+          crossorigin="anonymous"></script>
 </head>
 <body class="min-h-screen bg-gray-50 flex flex-col">
   <header class="bg-blue-600 text-white py-3 font-semibold text-center">
@@ -16,5 +21,21 @@
   <footer class="text-center text-sm text-gray-500 py-4">
     © 2025 마음나이 테스트
   </footer>
+
+  <!-- Kakao SDK 초기화 -->
+  <script>
+    // Kakao SDK 초기화
+    if (typeof Kakao !== 'undefined' && Kakao.isInitialized() === false) {
+      // 실제 프로덕션에서는 settings.py의 get_kakao_javascript_key()에서 가져온 키를 사용
+      // 현재는 개발용 플레이스홀더
+      const kakaoKey = '{{ kakao_javascript_key|default:"your-kakao-key-here" }}';
+      if (kakaoKey && kakaoKey !== 'your-kakao-key-here') {
+        Kakao.init(kakaoKey);
+        console.log('Kakao SDK initialized:', Kakao.isInitialized());
+      } else {
+        console.warn('Kakao JavaScript Key not configured');
+      }
+    }
+  </script>
 </body>
 </html> 

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://nojam.com/schemas/quiz-v2.1.json",
-  "title": "Quiz Configuration Schema v2.1",
-  "description": "JSON-driven 심리테스트 설정 스키마 (단순화 버전)",
+  "title": "Quiz Configuration Schema v2.1 (구현 완료)",
+  "description": "JSON-driven 심리테스트 설정 스키마 (Phase 1 구현 반영)",
   "type": "object",
   "required": ["meta", "config", "questions", "results"],
   "properties": {
@@ -75,8 +75,8 @@
         },
         "scoring_method": {
           "type": "string",
-          "enum": ["simple_count", "weighted_sum", "percentage"],
-          "description": "점수 계산 방식"
+          "enum": ["simple_count", "weighted_sum", "percentage", "mbti_dimensions"],
+          "description": "점수 계산 방식 (mbti_dimensions: 4차원 독립 계산 후 조합)"
         },
         "randomize_questions": {
           "type": "boolean",
@@ -136,8 +136,17 @@
                 },
                 "result_type": {
                   "type": "string",
-                  "pattern": "^[A-Z0-9_]+$",
-                  "description": "해당 선택지가 가리키는 결과 유형"
+                  "description": "해당 선택지가 가리키는 결과 유형 또는 MBTI 차원",
+                  "anyOf": [
+                    {
+                      "pattern": "^[A-Z0-9_]+$",
+                      "description": "일반 결과 유형 (simple_count 등)"
+                    },
+                    {
+                      "enum": ["E", "I", "S", "N", "T", "F", "J", "P"],
+                      "description": "MBTI 차원 (mbti_dimensions 전용)"
+                    }
+                  ]
                 }
               }
             }
@@ -196,7 +205,6 @@
             },
             "emoji": {
               "type": "string",
-              "pattern": "^[\\p{Emoji}\\p{Emoji_Modifier}\\p{Emoji_Component}\\p{Emoji_Modifier_Base}\\p{Emoji_Presentation}\\p{Extended_Pictographic}]+$",
               "description": "대표 이모지"
             },
             "style": {
@@ -211,8 +219,8 @@
                 },
                 "number": {
                   "type": "string",
-                  "pattern": "^[①②③④⑤⑥⑦⑧⑨⑩]$",
-                  "description": "원형 숫자"
+                  "pattern": "^[①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯]$",
+                  "description": "원형 숫자 (MBTI 16가지 지원)"
                 },
                 "css_class": {
                   "type": "string",

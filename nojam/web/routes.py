@@ -19,6 +19,7 @@ from fastapi.templating import Jinja2Templates
 from nojam.db.repository import AnswerRepository
 from nojam.services.loader import get_quiz_loader
 from nojam.services.quiz import calculate_result_type, get_score_breakdown
+from nojam.settings import get_kakao_javascript_key
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,16 @@ router = APIRouter()
 def get_repo() -> AnswerRepository:
     # 파일 SQLite 저장 (간단히 프로젝트 루트에)
     return AnswerRepository(db_path="nojam.sqlite3")
+
+
+def get_template_context(additional_context: dict | None = None) -> dict:
+    """모든 템플릿에서 사용할 공통 컨텍스트 생성."""
+    context = {
+        "kakao_javascript_key": get_kakao_javascript_key(),
+    }
+    if additional_context:
+        context.update(additional_context)
+    return context
 
 
 @router.get("/", response_class=HTMLResponse)
@@ -60,7 +71,7 @@ async def home(request: Request) -> HTMLResponse:
                 logger.warning(f"퀴즈 정보 로드 실패: {quiz_id} - {e}")
                 continue
 
-        context = {"quizzes": quiz_list}
+        context = get_template_context({"quizzes": quiz_list})
         logger.info(f"퀴즈 선택 페이지 로드: {len(quiz_list)}개 퀴즈 사용 가능")
 
         return templates.TemplateResponse(request, "home.html", context)
@@ -83,10 +94,12 @@ async def quiz(
         loader = get_quiz_loader()
         quiz_data = loader.load_quiz(target_quiz_id)
 
-        context = {
-            "quiz": quiz_data,
-            "quiz_id": target_quiz_id,
-        }
+        context = get_template_context(
+            {
+                "quiz": quiz_data,
+                "quiz_id": target_quiz_id,
+            }
+        )
 
         logger.info(f"퀴즈 폼 렌더: {target_quiz_id} (v{quiz_data.meta.version})")
         return templates.TemplateResponse(request, "quiz.html", context)
@@ -94,15 +107,13 @@ async def quiz(
     except FileNotFoundError:
         logger.error(f"퀴즈 파일을 찾을 수 없음: {target_quiz_id}")
         # 기본 하드코딩된 폼으로 폴백
-        return templates.TemplateResponse(
-            request, "quiz.html", {"quiz": None, "quiz_id": None}
-        )
+        context = get_template_context({"quiz": None, "quiz_id": None})
+        return templates.TemplateResponse(request, "quiz.html", context)
     except Exception as e:
         logger.error(f"퀴즈 로드 실패: {target_quiz_id} - {e}")
         # 기본 하드코딩된 폼으로 폴백
-        return templates.TemplateResponse(
-            request, "quiz.html", {"quiz": None, "quiz_id": None}
-        )
+        context = get_template_context({"quiz": None, "quiz_id": None})
+        return templates.TemplateResponse(request, "quiz.html", context)
 
 
 @router.post("/submit")
@@ -172,11 +183,10 @@ async def submit(
 
 @router.post("/stub/kakao/share")
 async def kakao_share_stub():
-    """카카오톡 공유 스텁."""
-    from nojam.external.kakao_stub import share_link
-
-    share_link("테스트", "https://example.com")
-    return {"status": "ok"}
+    """카카오톡 공유 스텁 (개발용)."""
+    # 실제 카카오 SDK로 전환되었으므로 단순한 성공 응답만 반환
+    logger.info("카카오 공유 요청 (개발 모드)")
+    return {"status": "success", "message": "카카오 공유 기능이 활성화되었습니다"}
 
 
 @router.get("/result/{answer_id}", response_class=HTMLResponse)
@@ -225,13 +235,15 @@ async def result(
         except Exception:
             pass
 
-    context = {
-        "result_type": result_type,
-        "answers": answers,
-        "result_details": result_details,
-        "score_breakdown": score_breakdown,
-        "quiz": quiz_data,
-    }
+    context = get_template_context(
+        {
+            "result_type": result_type,
+            "answers": answers,
+            "result_details": result_details,
+            "score_breakdown": score_breakdown,
+            "quiz": quiz_data,
+        }
+    )
 
     return templates.TemplateResponse(request, "result.html", context)
 
